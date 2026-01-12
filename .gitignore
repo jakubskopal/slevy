@@ -1,0 +1,28 @@
+# Common
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+requirements.txt.bak
+
+# Project Specific Data
+data/raw/
+*.links.txt
+output.json
+
+# Browser App
+browser/node_modules/
+browser/dist/
+browser/dist-ssr/
+browser/*.local

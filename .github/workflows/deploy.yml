@@ -1,0 +1,74 @@
+name: Crawl, Parse, and Deploy
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 2am daily
+  workflow_dispatch: # manual trigger
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  gather-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Cache raw data
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: ${{ runner.os }}-kupi-raw-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-kupi-raw-
+
+      - name: Run Crawler
+        run: python crawler.py # --color is not passed
+
+      - name: Run Parser
+        run: python parser.py
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: browser/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: browser
+        run: npm install
+
+      - name: Build Browser App
+        working-directory: browser
+        run: npm run build
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: browser/dist
+
+  deploy:
+    needs: gather-data
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
