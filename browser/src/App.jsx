@@ -237,7 +237,7 @@ function App() {
   const [sortOption, setSortOption] = useState('default') // default, price-asc, price-desc, unit-asc, unit-desc
 
   useEffect(() => {
-    fetch('/output.json')
+    fetch('output.json')
       .then(res => res.json())
       .then(d => {
         setData(d)
