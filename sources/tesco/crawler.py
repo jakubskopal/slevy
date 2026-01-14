@@ -98,8 +98,10 @@ class CrawlerState:
                 "tree": self.data["tree"]
             }
             
-            with open(self.filepath, 'w') as f:
+            temp_path = self.filepath + ".tmp"
+            with open(temp_path, 'w') as f:
                 json.dump(to_save, f, indent=2)
+            os.replace(temp_path, self.filepath)
 
     def mark_product(self, href, breadcrumbs=None):
         """
@@ -287,8 +289,10 @@ class TescoWorker:
         # Save meta as a JSON comment at the top
         comment = f"<!-- META_JSON: {json.dumps(meta, ensure_ascii=False)} -->\n".encode('utf-8')
         
-        with gzip.open(filepath, 'wb') as f:
+        temp_path = filepath + ".tmp"
+        with gzip.open(temp_path, 'wb') as f:
             f.write(comment + content.encode('utf-8'))
+        os.replace(temp_path, filepath)
         return filepath
 
     def quit(self):

@@ -104,15 +104,20 @@ class KupiCrawler:
         filepath = self.get_file_path(url) + ".gz"
         # Prepend the original URL as a comment
         comment = f"<!-- origin_url: {url} -->\n".encode('utf-8')
-        with gzip.open(filepath, 'wb') as f:
+        
+        temp_path = filepath + ".tmp"
+        with gzip.open(temp_path, 'wb') as f:
             f.write(comment + content)
+        os.replace(temp_path, filepath)
         return os.path.basename(filepath)
 
     def save_links(self, links, url):
         filepath = self.get_file_path(url) + ".links.txt"
         try:
-            with open(filepath, 'w') as f:
+            temp_path = filepath + ".tmp"
+            with open(temp_path, 'w') as f:
                 f.write('\n'.join(links))
+            os.replace(temp_path, filepath)
         except Exception as e:
             # Non-critical error
             pass
