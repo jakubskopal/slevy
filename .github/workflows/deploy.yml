@@ -87,7 +87,7 @@ jobs:
             ${{ runner.os }}-tesco-raw-
 
       - name: Run Tesco Crawler
-        run: python sources/tesco/crawler.py --headless --workers 3
+        run: python sources/tesco/crawler.py --headless --workers 6
 
       - name: Kill lingering processes
         if: always()
