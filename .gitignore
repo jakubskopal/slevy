@@ -17,12 +17,13 @@ ENV/
 requirements.txt.bak
 
 # Project Specific Data
-data/raw/
+data/
 *.links.txt
-output.json
+/kupi.json
 
 # Browser App
 browser/node_modules/
 browser/dist/
 browser/dist-ssr/
 browser/*.local
+browser/public/kupi.json

@@ -3,7 +3,7 @@ Kupi Parser: Structured data extraction from raw HTML archives.
 
 Overview:
 Processes raw HTML (.html and .html.gz) files collected by the crawler into a single, 
-deduplicated JSON profile (output.json). It merges data from different page types 
+deduplicated JSON profile (kupi.json). It merges data from different page types 
 to create a comprehensive view of available deals.
 
 Key Extraction Steps:
@@ -38,7 +38,7 @@ import argparse
 from console import Console
 
 class KupiParser:
-    def __init__(self, data_dir="data/raw"):
+    def __init__(self, data_dir="data/kupi_raw"):
         self.data_dir = data_dir
         self.products = []
         self.current_year = datetime.now().year
@@ -348,6 +348,12 @@ class KupiParser:
             with open(filepath, 'r', encoding='utf-8') as f:
                 content = f.read()
                 
+        # Extract product_url from comment
+        product_url = None
+        url_match = re.search(r"<!-- origin_url: (.*?) -->", content[:1000])
+        if url_match:
+            product_url = url_match.group(1)
+
         soup = BeautifulSoup(content, 'html.parser')
         
         filename = os.path.basename(filepath)
@@ -417,6 +423,7 @@ class KupiParser:
             return [{
                 'name': name,
                 'brand': brand,
+                'product_url': product_url,
                 'image_url': image_url,
                 'categories': categories,
                 'prices': offers
@@ -483,6 +490,10 @@ class KupiParser:
                         
                         existing = product_map[name]
                         
+                        # Merge product_url
+                        if not existing.get('product_url') and item.get('product_url'):
+                            existing['product_url'] = item['product_url']
+
                         # Merge brand
                         if not existing.get('brand') and item.get('brand'):
                             existing['brand'] = item['brand']
@@ -566,9 +577,10 @@ class KupiParser:
             }
         }
 
-        with open('output.json', 'w', encoding='utf-8') as f:
+        output_path = 'data/kupi.result.json'
+        with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
-        print("Data saved to output.json")
+        print(f"Data saved to {output_path}")
 
 if __name__ == "__main__":
     parser = KupiParser()

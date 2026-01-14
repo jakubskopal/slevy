@@ -237,7 +237,7 @@ function App() {
   const [sortOption, setSortOption] = useState('default') // default, price-asc, price-desc, unit-asc, unit-desc
 
   useEffect(() => {
-    fetch('output.json')
+    fetch('kupi.result.json')
       .then(res => res.json())
       .then(d => {
         setData(d)
@@ -344,7 +344,7 @@ function App() {
   }, [data, filters, sortOption])
 
   if (isLoading) return <div className="loading">Loading products...</div>
-  if (!data) return <div className="error">Failed to load data. Ensure output.json is in public folder.</div>
+  if (!data) return <div className="error">Failed to load data. Ensure kupi.result.json is in public folder.</div>
 
   const { brands, categories, stores } = data.metadata
 

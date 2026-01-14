@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "cp ../output.json public/",
+    "prebuild": "cp ../data/*.result.json public/",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

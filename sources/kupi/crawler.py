@@ -36,7 +36,7 @@ import threading
 from console import Console
 
 class KupiCrawler:
-    def __init__(self, base_dir="data/raw"):
+    def __init__(self, base_dir="data/kupi_raw"):
         self.start_url = "https://www.kupi.cz/slevy"
         self.scope_prefix = "https://www.kupi.cz/slevy"
         self.ua = UserAgent()
@@ -102,8 +102,10 @@ class KupiCrawler:
 
     def save_html(self, content, url):
         filepath = self.get_file_path(url) + ".gz"
+        # Prepend the original URL as a comment
+        comment = f"<!-- origin_url: {url} -->\n".encode('utf-8')
         with gzip.open(filepath, 'wb') as f:
-            f.write(content)
+            f.write(comment + content)
         return os.path.basename(filepath)
 
     def save_links(self, links, url):
