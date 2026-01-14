@@ -28,8 +28,8 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Cache Kupi Raw Data
-        uses: actions/cache@v4
+      - name: Restore Kupi Raw Data
+        uses: actions/cache/restore@v4
         with:
           path: data/kupi_raw
           key: ${{ runner.os }}-kupi-raw-${{ github.run_id }}
@@ -38,6 +38,13 @@ jobs:
 
       - name: Run Kupi Crawler
         run: python sources/kupi/crawler.py
+
+      - name: Save Kupi Raw Data
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/kupi_raw
+          key: ${{ runner.os }}-kupi-raw-${{ github.run_id }}
 
       - name: Run Kupi Parser
         run: python sources/kupi/parser.py
@@ -65,8 +72,8 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Cache Tesco Raw Data
-        uses: actions/cache@v4
+      - name: Restore Tesco Raw Data
+        uses: actions/cache/restore@v4
         with:
           path: data/tesco_raw
           key: ${{ runner.os }}-tesco-raw-${{ github.run_id }}
@@ -75,6 +82,13 @@ jobs:
 
       - name: Run Tesco Crawler
         run: python sources/tesco/crawler.py --headless --workers 3
+
+      - name: Save Tesco Raw Data
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/tesco_raw
+          key: ${{ runner.os }}-tesco-raw-${{ github.run_id }}
 
       - name: Run Tesco Parser
         run: python sources/tesco/parser.py
