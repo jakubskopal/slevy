@@ -8,6 +8,7 @@ import os
 import glob
 import re
 from datetime import datetime
+from collections import Counter
 
 
 class TescoParser:
@@ -354,12 +355,45 @@ class TescoParser:
             if self.console:
                 self.console.update(i + 1, f"Parsed: {len(product_map)}")
 
+        # Metadata Aggregation
+        brands = set()
+        categories = set()
+        stores = set()
+
+        for product in product_map.values():
+             if product.get('brand'):
+                 brands.add(product['brand'])
+             if product.get('categories'):
+                 categories.update(product['categories'])
+             if product.get('prices'):
+                 for p in product['prices']:
+                     if p.get('store_name'):
+                         stores.add(p['store_name'])
+
+        # Metadata Aggregation
+        brands = Counter()
+        categories = Counter()
+        stores = Counter()
+
+        for product in product_map.values():
+             if product.get('brand'):
+                 brands[product['brand']] += 1
+             if product.get('categories'):
+                 for cat in product['categories']:
+                     categories[cat] += 1
+             if product.get('prices'):
+                 for p in product['prices']:
+                     if p.get('store_name'):
+                         stores[p['store_name']] += 1
+
         output_data = {
             "products": list(product_map.values()),
             "metadata": {
                 "total_products": len(product_map),
                 "generated_at": datetime.now().isoformat(),
-                "stores": {"Tesco": len(product_map)},
+                "stores": dict(sorted(stores.items())),
+                "categories": dict(sorted(categories.items())),
+                "brands": dict(sorted(brands.items()))
             }
         }
 
@@ -373,3 +407,7 @@ class TescoParser:
             print(f"Saved to {output_path}")
 
 
+
+if __name__ == "__main__":
+    parser = TescoParser()
+    parser.run()

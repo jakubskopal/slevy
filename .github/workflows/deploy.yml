@@ -66,10 +66,34 @@ jobs:
 
       - name: Save Raw Data Cache
         if: always()
+        id: save_cache
         uses: actions/cache/save@v4
         with:
           path: data/${{ matrix.store }}_raw
           key: ${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}
+
+      - name: Cleanup Old Caches
+        if: steps.save_cache.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PREFIX="${{ runner.os }}-${{ matrix.store }}-raw-"
+          CURRENT_KEY="${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}"
+          
+          echo "Fetching caches with prefix: $PREFIX"
+          gh cache list --key "$PREFIX" --json id,key --limit 100 > caches.json
+          
+          jq -c '.[]' caches.json | while read -r cache; do
+            ID=$(echo "$cache" | jq -r '.id')
+            KEY=$(echo "$cache" | jq -r '.key')
+            
+            if [ "$KEY" != "$CURRENT_KEY" ]; then
+              echo "Deleting old cache: $KEY (ID: $ID)"
+              gh cache delete "$KEY" || true
+            else
+              echo "Keeping current cache: $KEY"
+            fi
+          done
 
       - name: Upload Raw Data
         if: always()

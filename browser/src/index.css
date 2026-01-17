@@ -115,6 +115,23 @@ main {
   background-color: rgba(79, 70, 229, 0.1);
 }
 
+.preset-link {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.preset-link:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -468,4 +485,94 @@ main {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+
+/* Source Selection Styles */
+.source-selection {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.source-select-input {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  box-sizing: border-box;
+  /* Ensure padding doesn't overflow width */
+}
+
+.source-select-input:hover,
+.source-select-input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-weight: 500;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--bg-tertiary);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.category-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0.5rem 0;
+  width: 100%;
 }

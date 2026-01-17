@@ -5,24 +5,27 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "cp ../data/*.result.json public/",
+    "prebuild": "cp ../data/*.result.json public/ && python3 ../scripts/generate_index.py --data-dir ../data --target-dir public",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.12.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@types/react": "^19.2.5",
+    "@types/node": "^25.0.9",
+    "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "typescript": "^5.9.3",
     "vite": "^7.2.4"
   }
 }

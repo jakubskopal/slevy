@@ -1,0 +1,33 @@
+{
+  "products": [
+    {
+      "name": "Kornbageta s kváskem",
+      "brand": "Kornbageta",
+      "product_url": "https://wolt.com/cs/cze/prague/venue/billa-malesice/kornbageta-s-kvaskem-itemid-676e8ebad883b6de4c49a4b7",
+      "image_url": null,
+      "categories": [
+        "PEČIVO",
+        "SLANÉ PEČIVO"
+      ],
+      "prices": [
+        {
+          "store_name": "Billa",
+          "price": 14.9,
+          "original_price": null,
+          "unit_price": 129.57,
+          "unit": "Kg",
+          "package_size": "115 g",
+          "condition": null
+        }
+      ],
+      "description": null
+    }
+  ],
+  "metadata": {
+    "total_products": 1,
+    "generated_at": "2026-01-16T19:43:12.386060",
+    "stores": {
+      "Billa": 1
+    }
+  }
+}

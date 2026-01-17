@@ -8,6 +8,7 @@ import os
 import glob
 import re
 from datetime import datetime
+from collections import Counter
 from bs4 import BeautifulSoup
 
 
@@ -145,8 +146,12 @@ class WoltParser:
         description = desc_elem.get_text(strip=True) if desc_elem else None
 
         # 4. Image
-        img_elem = modal.select_one('[data-test-id="product-modal.main-image.product-image"]')
-        image_url = img_elem.get('src') if img_elem else None
+        img_container = modal.select_one('[data-test-id="product-modal.main-image.product-image"]')
+        if img_container:
+            img_elem = img_container.find('img')
+            image_url = img_elem.get('src') if img_elem else None
+        else:
+            image_url = None
 
         # 5. Prices and Tags
         tp_elem = modal.select_one('[data-test-id="product-modal.total-price"]') or modal.select_one('[data-test-id="product-modal.price"]')
@@ -217,7 +222,7 @@ class WoltParser:
             'description': description
         }]
 
-    def run(self, workers=None):
+    def run(self, workers=None, limit=None):
         import concurrent.futures
         import multiprocessing
 
@@ -225,13 +230,16 @@ class WoltParser:
             workers = max(1, multiprocessing.cpu_count() // 2)
 
         files = glob.glob(os.path.join(self.data_dir, '*.html.gz'))
+        if limit:
+            files = files[:limit]
+            
         total_files = len(files)
         if self.console:
              log_func = self.console.log
         else:
              log_func = print
 
-        log_func(f"Found {total_files} files in {self.data_dir} (using {workers} workers)")
+        log_func(f"Found {len(glob.glob(os.path.join(self.data_dir, '*.html.gz')))} total files in {self.data_dir}, processing {total_files} (using {workers} workers)")
         
         product_map = {}
         
@@ -255,12 +263,31 @@ class WoltParser:
                 if self.console:
                     self.console.update(i + 1, f"Parsed: {len(product_map)}")
 
+        # Metadata Aggregation
+        brands = Counter()
+        categories = Counter()
+        stores = Counter()
+
+        # Re-iterate product map to aggregate metadata (safe in main thread)
+        for product in product_map.values():
+             if product.get('brand'):
+                 brands[product['brand']] += 1
+             if product.get('categories'):
+                 for cat in product['categories']:
+                    categories[cat] += 1
+             if product.get('prices'):
+                 for p in product['prices']:
+                     if p.get('store_name'):
+                         stores[p['store_name']] += 1
+
         output_data = {
             "products": list(product_map.values()),
             "metadata": {
                 "total_products": len(product_map),
                 "generated_at": datetime.now().isoformat(),
-                "stores": {self.store_name: len(product_map)},
+                "stores": dict(sorted(stores.items())),
+                "categories": dict(sorted(categories.items())),
+                "brands": dict(sorted(brands.items()))
             }
         }
 
@@ -273,4 +300,16 @@ class WoltParser:
             print(f"Saved to {self.output_path}")
 
 
-
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--store", help="Store to parse (albert, billa, globus)")
+    parser.add_argument("--limit", type=int, help="Limit number of files to process")
+    args = parser.parse_args()
+    
+    if args.store and args.store in VENUES:
+        c = VENUES[args.store]
+        parser = WoltParser(c["dir"], c["name"], c["output"])
+        parser.run(limit=args.limit)
+    else:
+        print("Available stores:", list(VENUES.keys()))

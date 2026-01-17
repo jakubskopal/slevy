@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "name": "albert",
+      "file": "albert.result.json"
+    },
+    {
+      "name": "billa",
+      "file": "billa.result.json"
+    },
+    {
+      "name": "kupi",
+      "file": "kupi.result.json"
+    },
+    {
+      "name": "tesco",
+      "file": "tesco.result.json"
+    }
+  ]
+}
