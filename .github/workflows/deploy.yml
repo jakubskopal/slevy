@@ -20,19 +20,14 @@ jobs:
         include:
           - store: albert
             crawl_args: --headless --workers 4 --color --limit 0
-            parse_args: --workers 4 --color
           - store: billa
             crawl_args: --headless --workers 4 --color --limit 0
-            parse_args: --workers 4 --color
           - store: globus
             crawl_args: --headless --workers 4 --color --limit 0
-            parse_args: --workers 4 --color
           - store: tesco
             crawl_args: --headless --workers 4 --color
-            parse_args: --color
           - store: kupi
             crawl_args: --workers 4 --color
-            parse_args: --color
             
     steps:
       - name: Checkout
