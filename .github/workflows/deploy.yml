@@ -30,7 +30,7 @@ jobs:
           - store: billa
             crawl_args: --headless --workers 4 --limit 0
           - store: globus
-            crawl_args: --headless --workers 4 --limit 0
+            crawl_args: --headless --workers 6 --limit 0
           - store: tesco
             crawl_args: --headless --workers 4
           - store: kupi
