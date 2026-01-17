@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 2 * * *' # 2am daily
   workflow_dispatch: # manual trigger
+    inputs:
+      skip_crawler:
+        description: 'Skip actual crawling (use cache)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -57,16 +63,17 @@ jobs:
             ${{ runner.os }}-${{ matrix.store }}-raw-
 
       - name: Run Crawler
+        if: inputs.skip_crawler != true
         run: python sources/crawl_${{ matrix.store }}.py ${{ matrix.crawl_args }}
 
       - name: Kill lingering processes
-        if: always()
+        if: always() && inputs.skip_crawler != true
         run: |
           pkill -f crawler.py || true
           pkill -f chrome || true
 
       - name: Save Raw Data Cache
-        if: always()
+        if: always() && inputs.skip_crawler != true
         id: save_cache
         uses: actions/cache/save@v4
         with:
@@ -74,7 +81,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}
 
       - name: Cleanup Old Caches
-        if: steps.save_cache.outcome == 'success'
+        if: steps.save_cache.outcome == 'success' && inputs.skip_crawler != true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -117,7 +124,7 @@ jobs:
           - store: billa
             parse_args: --workers 4
           - store: globus
-            parse_args: --workers 4
+            parse_args: --workers 6
           - store: tesco
             parse_args:
           - store: kupi
