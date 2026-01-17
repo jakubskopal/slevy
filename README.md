@@ -94,13 +94,20 @@ The `browser/` directory contains a modern web application for visualizing the a
 
 ### Running the App
 1.  Navigate to `browser/`.
-2.  **Node.js Setup**:
-    *   If you use [nvm](https://github.com/nvm-sh/nvm), run `nvm use` (checks `.nvmrc`).
-    *   Otherwise, ensure you have Node.js (v20+) installed.
+2.  **Node.js Setup (CRITICAL)**:
+    *   This project relies on a specific Node.js version.
+    *   **Always** run `nvm use` in the `browser/` directory to load the correct version from `.nvmrc`.
+    *   If you don't have `nvm`, check `.nvmrc` for the required version and install it manually.
 3.  Install dependencies: `npm install`.
 4.  **Data Setup**: The build process automatically copies `data/*.result.json` to `public/` and generates the index.
     *   Ensure you have generated data in `../data/`.
 5.  Start dev server: `npm run dev`.
+
+## Python Environment
+For running crawlers and scripts in `sources/`:
+*   **Always** use a virtual environment.
+*   Create/Activate: `python3 -m venv .venv` and `source .venv/bin/activate`.
+*   Install requirements: `pip install -r requirements.txt`.
 
 ## Documentation Maintenance
 
