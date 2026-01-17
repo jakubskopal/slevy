@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: data/${{ matrix.store }}_raw
-          key: ${{ runner.os }}-${{ matrix.store }}-raw-last
+          key: ${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}
 
       - name: Upload Raw Data
         if: always()
