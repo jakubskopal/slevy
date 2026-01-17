@@ -92,7 +92,7 @@ jobs:
           - store: billa
             parse_args: --workers 4
           - store: globus
-            parse_args: --workers 4 --browser firefox
+            parse_args: --workers 4
           - store: tesco
             parse_args:
           - store: kupi
