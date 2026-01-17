@@ -128,7 +128,7 @@ jobs:
           - store: tesco
             parse_args: --workers 4
           - store: kupi
-            parse_args:
+            parse_args: --workers 4
     steps:
       - name: Checkout
         uses: actions/checkout@v4
