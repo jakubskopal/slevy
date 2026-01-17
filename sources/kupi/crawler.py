@@ -22,18 +22,16 @@ Key Features & Steps:
 import requests
 from bs4 import BeautifulSoup
 import os
-import time
 from fake_useragent import UserAgent
 import urllib.parse
 from collections import deque
-import argparse
-import sys
+
 import gzip
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import concurrent.futures
 import threading
-from console import Console
+
 
 class KupiCrawler:
     def __init__(self, base_dir="data/kupi_raw"):
@@ -257,15 +255,22 @@ class KupiCrawler:
                 
         return extracted_links
 
-    def run(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--color", action="store_true", help="Show ANSI progress bar")
-        args = parser.parse_args()
-        
+    def run(self, console=None, workers=None):
         print_lock = threading.Lock()
         futures = {} # future -> url
         
-        console = Console(total=0, use_colors=args.color)
+        # Use passed console or fallback (silent/print) if None (though main assures it)
+        if console is None:
+             # Fallback if run without console
+             class DummyConsole:
+                 def log(self, m): print(m)
+                 def update(self, *a): pass
+                 def start(self): pass
+                 def finish(self): pass
+                 def total(self): return 0
+             console = DummyConsole()
+             console.total = 0
+
         def log(msg):
             console.log(msg)
         
@@ -275,12 +280,15 @@ class KupiCrawler:
 
         log(f"Starting crawl at {self.start_url}")
         
-        console.start()
         console.update(0, "Init...")
         
         # Dynamic worker count: 2 * CPU cores (defaulting to 4 if cpu_count is None)
-        cpu_count = os.cpu_count() or 2
-        max_workers = cpu_count * 2
+        if workers:
+            max_workers = workers
+        else:
+            cpu_count = os.cpu_count() or 2
+            max_workers = cpu_count * 2
+            
         futures = {} # future -> url
         
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -333,10 +341,4 @@ class KupiCrawler:
                 if not self.queue and not futures:
                     break
         
-        console.finish()
-
-        print("\nCrawl finished." if args.color else f"Crawl finished. Visited {len(self.visited)} pages.")
-
-if __name__ == "__main__":
-    crawler = KupiCrawler()
-    crawler.run()
+        log(f"Crawl finished. Visited {len(self.visited)} pages.")

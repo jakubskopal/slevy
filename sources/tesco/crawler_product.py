@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import json
 import time
+from . import crawler_global
 
 def wait_for_product_page_ready(driver, log_func=print):
     """
@@ -12,8 +13,13 @@ def wait_for_product_page_ready(driver, log_func=print):
     # Wait for typical product page elements
     try:
         WebDriverWait(driver, 10, 0.1).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'h1.ddsweb-heading'))
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.pdp-tile'))
         )
+        
+        if crawler_global.check_error_page(driver):
+            log_func(f"Detected error page (Jejda...) during product load")
+            return False
+
         return True
     except:
         log_func(f"Timeout waiting for product page to load")

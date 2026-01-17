@@ -8,13 +8,12 @@ import os
 import glob
 import re
 from datetime import datetime
-from collections import Counter
-import argparse
-from console import Console
+
 
 class TescoParser:
-    def __init__(self, data_dir="data/tesco_raw"):
+    def __init__(self, data_dir="data/tesco_raw", console=None):
         self.data_dir = data_dir
+        self.console = console
         self.products = []
 
     def extract_json_ld(self, soup):
@@ -213,7 +212,6 @@ class TescoParser:
                         offer['condition'] = 'Clubcard'
                 
                 prices.append(offer)
-                prices.append(offer)
             elif json_ld:
                 # Fallback to JSON-LD prices
                 offers = json_ld.get('offers')
@@ -235,17 +233,89 @@ class TescoParser:
                 price_elem = soup.select_one('.gyT8MW_priceText')
                 if price_elem:
                     try:
+                        # Main Price (e.g. "1,34 Kč")
                         txt = price_elem.get_text(strip=True).replace('Kč', '').replace(',', '.').strip()
-                        val = float(txt)
+                        price_val = float(txt)
+                        
+                        unit_price_val = price_val
+                        unit_str = 'kus'
+                        
+                        # Unit Price (e.g. "9,90 Kč/kg")
+                        # Look for the subtext element
+                        # Unit Price (e.g. "9,90 Kč/kg")
+                        # Look for the subtext element
+                        unit_elem = soup.select_one('.ddsweb-price__subtext')
+                        if unit_elem:
+                            unit_txt = unit_elem.get_text(strip=True)
+                            # Regex to match "9,90 Kč/kg" or similar
+                            # Use [\s\xa0] explicit for safety
+                            m = re.search(r'([\d,.\s]+)[\s\xa0]*Kč[\s\xa0]*/[\s\xa0]*(\w+)', unit_txt)
+                            if m:
+                                up_str = m.group(1).replace(',', '.').replace(' ', '').strip()
+                                unit_price_val = float(up_str)
+                                unit_str = m.group(2)
+                        
                         prices.append({
                             'store_name': 'Tesco',
-                            'price': val,
-                            'unit_price': val,
-                            'unit': 'kus',
+                            'price': price_val,
+                            'unit_price': unit_price_val,
+                            'unit': unit_str,
                             'package_size': None,
                             'condition': None
                         })
                     except: pass
+        
+        # Refine Unit from DOM (Always Run for standard prices with default unit)
+        for p in prices:
+            if p.get('condition') is None and p.get('unit') == 'kus':
+                try:
+                    unit_elem = soup.select_one('.ddsweb-price__subtext')
+                    if unit_elem:
+                        unit_txt = unit_elem.get_text(strip=True)
+                        m_up = re.search(r'([\d,.\s]+)[\s\xa0]*Kč[\s\xa0]*/[\s\xa0]*(\w+)', unit_txt)
+                        if m_up:
+                             up_str = m_up.group(1).replace(',', '.').replace(' ', '').strip()
+                             p['unit_price'] = float(up_str)
+                             p['unit'] = m_up.group(2)
+                except: pass
+
+        # Check for Clubcard Price via DOM (Text Search) - Always Run
+        try:
+            # Strategy: Find elements with text matching the pattern
+            clubcard_elems = soup.find_all(string=re.compile(r"s Clubcard", re.IGNORECASE))
+            for c_text in clubcard_elems:
+                # Pattern: "19,90 Kč s Clubcard"
+                m = re.search(r'(\d+[,.]\d{2})[\s\xa0]*Kč[\s\xa0]*s[\s\xa0]*Clubcard', c_text, re.IGNORECASE)
+                if m:
+                    val_str = m.group(1).replace(',', '.').replace(' ', '').strip()
+                    cc_price = float(val_str)
+                    
+                    cc_unit_price = cc_price
+                    cc_unit = 'kus'
+                    
+                    # Try to find unit price in siblings
+                    parent = c_text.parent
+                    if parent:
+                        for sib in parent.next_siblings:
+                            if hasattr(sib, 'get_text'):
+                                sib_txt = sib.get_text(strip=True)
+                                m_up = re.search(r'([\d,.\s]+)\s*Kč\s*/\s*(\w+)', sib_txt)
+                                if m_up:
+                                    cc_up_str = m_up.group(1).replace(',', '.').replace(' ', '').strip()
+                                    cc_unit_price = float(cc_up_str)
+                                    cc_unit = m_up.group(2)
+                                    break
+                    
+                    prices.append({
+                        'store_name': 'Tesco',
+                        'price': cc_price,
+                        'unit_price': cc_unit_price,
+                        'unit': cc_unit,
+                        'package_size': None,
+                        'condition': 'Clubcard'
+                    })
+                    break 
+        except: pass
 
         return [{
             'name': name,
@@ -257,17 +327,20 @@ class TescoParser:
         }]
 
     def run(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--color", action="store_true", help="Show ANSI progress bar")
-        args = parser.parse_args()
-
         files = glob.glob(os.path.join(self.data_dir, '*.html.gz'))
         total_files = len(files)
-        print(f"Found {total_files} files in {self.data_dir}")
+        
+        if self.console:
+            log_func = self.console.log
+        else:
+             log_func = print
+
+        log_func(f"Found {total_files} files in {self.data_dir}")
         
         product_map = {}
-        console = Console(total=total_files, use_colors=args.color)
-        console.start()
+        
+        if self.console and self.console.total == 0:
+             self.console.total = total_files
 
         for i, f in enumerate(files):
             try:
@@ -278,9 +351,8 @@ class TescoParser:
                         product_map[name] = item
             except Exception:
                 pass
-            console.update(i + 1, f"Parsed: {len(product_map)}")
-        
-        console.finish()
+            if self.console:
+                self.console.update(i + 1, f"Parsed: {len(product_map)}")
 
         output_data = {
             "products": list(product_map.values()),
@@ -294,8 +366,10 @@ class TescoParser:
         output_path = 'data/tesco.result.json'
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
-        print(f"Saved to {output_path}")
+        
+        if self.console:
+            self.console.log(f"Saved to {output_path}")
+        else:
+            print(f"Saved to {output_path}")
 
-if __name__ == "__main__":
-    parser = TescoParser()
-    parser.run()
+

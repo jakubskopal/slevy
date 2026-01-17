@@ -5,22 +5,14 @@ Navigates exclusively by clicking. Supports multi-window parallelism and resume.
 import os
 import time
 import gzip
-import argparse
 import urllib.parse
-import random
 import json
 import threading
-from concurrent.futures import ThreadPoolExecutor
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from console import Console
-from crawler_product import extract_product_data, wait_for_product_page_ready
-import crawler_category
+
+
+from . import crawler_category
+from .crawler_product import extract_product_data, wait_for_product_page_ready
+
 
 # Categories to crawl
 CATEGORIES = [
@@ -120,36 +112,35 @@ class CrawlerState:
 
 
 
+
+
+
+class GlobalCounter:
+    def __init__(self, limit):
+        self.limit = limit
+        self.count = 0
+        self.lock = threading.Lock()
+    
+    def increment(self):
+        with self.lock:
+            self.count += 1
+            return self.count <= self.limit if self.limit > 0 else True
+
+    def is_reached(self):
+        with self.lock:
+            return self.limit > 0 and self.count >= self.limit
+
+
 class TescoWorker:
-    def __init__(self, state, console=None, base_dir="data/tesco_raw", headless=False):
+    def __init__(self, state, console=None, base_dir="data/tesco_raw", driver_factory=None, global_counter=None):
         self.start_url = "https://nakup.itesco.cz/groceries/cs-CZ/"
         self.state = state
         self.console = console
         self.base_dir = base_dir
-        
-        self.options = Options()
-        if headless:
-            self.options.add_argument("--headless=new")
-        self.options.add_argument("--window-size=1280,1024")
-        self.options.add_argument("--disable-blink-features=AutomationControlled")
-        self.options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        self.options.add_experimental_option("useAutomationExtension", False)
-        # Use random offset to window position to see multiple windows clearly
-        x = random.randint(0, 500)
-        y = random.randint(0, 500)
-        self.options.add_argument(f"--window-position={x},{y}")
-        self.options.add_argument("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36")
-        
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
-        self.driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-            "source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        })
-
-
+        self.global_counter = global_counter
+        self.driver = driver_factory()
 
     # extract_product_data moved to crawler_product.py
-
-
 
     def log(self, msg):
         """
@@ -165,6 +156,9 @@ class TescoWorker:
         Crawls a single category, navigating through pagination and visiting individual product pages
         to extract data. returns True if successful, False if a retry is needed.
         """
+        if self.global_counter and self.global_counter.is_reached():
+             return True
+
         self.log(f"Worker starting category: {cat_name}")
         if not crawler_category.navigate_to_category(self.driver, cat_name, self.log):
             return False
@@ -174,6 +168,10 @@ class TescoWorker:
 
 
         while True:
+            # Check global limit
+            if self.global_counter and self.global_counter.is_reached():
+                 self.log(f"[{cat_name}] Global limit reached. Stopping.")
+                 return True
 
             if "Access Denied" in self.driver.page_source:
                 self.log(f"[{cat_name}] Access Denied. Cooling down...")
@@ -237,6 +235,12 @@ class TescoWorker:
                                 self.console.total = total_prod + 500
                                 
                             self.console.update(total_prod, stats=f"Cats: --/{len(CATEGORIES)}")
+                        
+                        # Increment global counter
+                        if self.global_counter:
+                            if not self.global_counter.increment():
+                                self.log(f"[{cat_name}] Global limit reached. Stopping.")
+                                return True
 
                         self.driver.back()
                         if not crawler_category.wait_for_category_page_ready(self.driver, self.log):
@@ -301,7 +305,7 @@ class TescoWorker:
         """
         self.driver.quit()
 
-def run_worker(cat_name, state, console, headless, index, limit):
+def run_worker(cat_name, state, console, driver_factory, global_counter, index, limit):
     """
     Worker entry point that manages the lifecycle of a single category crawl, including
     restarts on failure.
@@ -310,7 +314,10 @@ def run_worker(cat_name, state, console, headless, index, limit):
     time.sleep(index * 1)
     
     while True:
-        worker = TescoWorker(state, console=console, headless=headless)
+        if global_counter and global_counter.is_reached():
+             break
+
+        worker = TescoWorker(state, console=console, driver_factory=driver_factory, global_counter=global_counter)
         try:
             success = worker.crawl_category(cat_name, limit=limit)
             if success:
@@ -324,43 +331,4 @@ def run_worker(cat_name, state, console, headless, index, limit):
         
         time.sleep(5) # Cooldown before restart
 
-def main():
-    """
-    Main execution logic: parses arguments, initializes state, and spins up worker threads.
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--workers", type=int, default=3, help="Number of parallel windows")
-    parser.add_argument("--headless", action="store_true", help="Run in headless mode")
-    parser.add_argument("--color", action="store_true", help="Show ANSI progress bar")
-    parser.add_argument("--limit", type=int, default=0, help="Limit products per category")
-    args = parser.parse_args()
 
-    # Ensure output dir exists
-    if not os.path.exists("data/tesco_raw"):
-        os.makedirs("data/tesco_raw")
-
-    state = CrawlerState()
-    
-    # Filter pending categories
-    # Run all categories
-    pending = CATEGORIES
-
-    # Estimate 1000 products initially
-    console = Console(total=1000, use_colors=args.color)
-    console.start()
-    
-    console.log(f"Total categories: {len(CATEGORIES)}. Remaining: {len(pending)}")
-
-    # Initialize with existing progress
-    total_prod = len(state.data["processed_products"])
-    console.update(total_prod, stats=f"Cats: --/{len(CATEGORIES)}")
-
-    with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        # Use a list of tuples to pass index
-        executor.map(lambda x: run_worker(x[1], state, console, args.headless, x[0], args.limit), enumerate(pending))
-
-    console.finish()
-    console.log("All workers finished.")
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,55 @@
+TAG TEXT: Vyprodáno
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="primaryNeutral">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  Vyprodáno
+ </div>
+</div>
+
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="primaryNeutral">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  Vyprodáno
+ </div>
+</div>
+
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="primaryNeutral">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  Vyprodáno
+ </div>
+</div>
+
+----------------------------------------
+TAG TEXT: 18+
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="secondaryWarning">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  18+
+ </div>
+</div>
+
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="secondaryWarning">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  18+
+ </div>
+</div>
+
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="secondaryWarning">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  18+
+ </div>
+</div>
+
+----------------------------------------
+TAG TEXT: Věkové omezení
+HTML:
+<div class="cb_Tag_Root_7dc" data-size="small" data-variant="secondaryWarning">
+ <div class="cb_typographyClassName_bodyBase_1ac cb_typographyClassName_SmallSemiBold_1ac cb_Tag_Label_7dc">
+  Věkové omezení
+ </div>
+</div>
+
+----------------------------------------

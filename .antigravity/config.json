@@ -1,0 +1,16 @@
+{
+    "priorityFiles": [
+        "/home/jakubs/Work/Me/agrty/README.md",
+        "/home/jakubs/Work/Me/agrty/sources/schema.json"
+    ],
+    "projectContext": {
+        "name": "Agrty",
+        "description": "Grocery crawler project that scrapes product and price data from online retailers (Tesco, Kupi.cz)",
+        "keyPrinciples": [
+            "All parser outputs must conform to sources/schema.json",
+            "Crawlers save raw HTML (gzipped) for offline parsing",
+            "README.md and schema.json are maintained by the AI assistant",
+            "Update documentation when making architectural changes"
+        ]
+    }
+}

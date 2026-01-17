@@ -33,10 +33,6 @@ from datetime import datetime, timedelta
 import gzip
 from collections import Counter
 
-import sys
-import argparse
-from console import Console
-
 class KupiParser:
     def __init__(self, data_dir="data/kupi_raw"):
         self.data_dir = data_dir
@@ -447,11 +443,7 @@ class KupiParser:
         
         return []
 
-    def run(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--color", action="store_true", help="Show ANSI progress bar")
-        args = parser.parse_args()
-
+    def run(self, console=None):
         # Recursively find all html and html.gz files
         files = glob.glob(os.path.join(self.data_dir, '**', '*.html*'), recursive=True)
         # Filter for specifically .html or .html.gz just in case
@@ -468,9 +460,11 @@ class KupiParser:
         product_map = {}
         total_prices_count = 0
         
-        console = Console(total=total_files, use_colors=args.color)
-        console.start()
-
+        # Use passed console or create basic one if None
+        if console:
+            console.total = total_files
+            console.update(0, "Init...")
+        
         for f in files:
             processed_count += 1
             
@@ -529,11 +523,10 @@ class KupiParser:
             except Exception:
                 pass
             
-            stats = f"Prod: {len(product_map)} | Price: {total_prices_count}"
-            console.update(processed_count, stats)
+            if console:
+                stats = f"Prod: {len(product_map)} | Price: {total_prices_count}"
+                console.update(processed_count, stats)
         
-        console.finish()
-
         self.products = list(product_map.values())
         print(f"Parsed {len(self.products)} unique products.")
         
@@ -581,7 +574,3 @@ class KupiParser:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
         print(f"Data saved to {output_path}")
-
-if __name__ == "__main__":
-    parser = KupiParser()
-    parser.run()

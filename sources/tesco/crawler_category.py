@@ -2,6 +2,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from . import crawler_global
 
 START_URL = "https://nakup.itesco.cz/groceries/cs-CZ/"
 
@@ -29,11 +30,15 @@ def wait_for_category_page_ready(driver, log_func=print):
         WebDriverWait(driver, 10, 0.1).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="pagination-result-count"], a.gyT8MW_titleLink'))
         )
-        time.sleep(1.0) # Small buffer for layout settlement
+        
+        if crawler_global.check_error_page(driver):
+             log_func(f"Detected error page (Jejda...) during category load")
+             return False
+
         return True
     except:
-         log_func(f"Timeout waiting for category content to load")
-         return False
+        log_func(f"Timeout waiting for category content to load")
+        return False
 
 def navigate_to_category(driver, cat_name, log_func=print):
     """
