@@ -444,17 +444,24 @@ class KupiParser:
         return []
 
     def run(self, console=None):
+        # Helper to log to console or stdout
+        def log(msg):
+            if console:
+                console.log(msg)
+            else:
+                print(msg)
+
         # Recursively find all html and html.gz files
         files = glob.glob(os.path.join(self.data_dir, '**', '*.html*'), recursive=True)
         # Filter for specifically .html or .html.gz just in case
         files = [f for f in files if f.endswith('.html') or f.endswith('.html.gz')]
         
         total_files = len(files)
-        print(f"Found {total_files} files to parse.")
+        log(f"Found {total_files} files to parse.")
         
         # Parallel Processing
         # CPU bound mostly (parsing), but some IO.
-        print(f"Starting parsing sequentially...")
+        log(f"Starting parsing sequentially...")
         
         processed_count = 0
         product_map = {}
@@ -528,7 +535,7 @@ class KupiParser:
                 console.update(processed_count, stats)
         
         self.products = list(product_map.values())
-        print(f"Parsed {len(self.products)} unique products.")
+        log(f"Parsed {len(self.products)} unique products.")
         
         # Collect all unique store names and categories with counts
         store_counts = Counter()
@@ -573,4 +580,4 @@ class KupiParser:
         output_path = 'data/kupi.result.json'
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
-        print(f"Data saved to {output_path}")
+        log(f"Data saved to {output_path}")

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import sys
-import os
-
-
 
 from tesco.parser import TescoParser
 from console import Console

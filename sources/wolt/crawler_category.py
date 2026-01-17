@@ -237,34 +237,23 @@ def discover_categories(driver, start_url, log_func=print):
 
 
 
-def scroll_and_load_all_products(driver, raw_data_dir, category_info=None, log_func=print, global_counter=None, max_scrolls=50):
+
+def iterate_category_products(driver, log_func, callback, max_scrolls=50):
     """
-    Scrolls down the page to trigger infinite scroll, clicks on each product,
-    and extracts product data inline.
+    Generic iteration logic for a category page.
+    Scrolls, finds new products, and invokes callback for each.
     
     Args:
-        driver: Selenium WebDriver instance
-        raw_data_dir: Directory to save the files in
-        category_info: List of category breadcrumbs (e.g., ['OVOCE A ZELENINA', 'OVOCE'])
+        driver: Selenium WebDriver
         log_func: Logging function
-        global_counter: GlobalCounter instance for limiting products
-        max_scrolls: Maximum number of scroll attempts
-    
-    Returns:
-        list: List of extracted product data dictionaries
+        callback: Function(driver, product_element, product_url) -> None
+        max_scrolls: Limit scrolls
     """
     scroll_count = 0
     processed_urls = set()
-    product_data_list = []
     
     while scroll_count < max_scrolls:
-        # Check limit before finding elements
-        if global_counter and global_counter.is_reached():
-             log_func("Global limit reached. Stopping.")
-             break
-
         # Get current product links
-        # We collect URLs first to avoid StaleElementReferenceException when DOM updates
         products = driver.find_elements(By.CSS_SELECTOR, 'a[data-test-id="CardLinkButton"]')
         
         current_batch_urls = []
@@ -276,15 +265,12 @@ def scroll_and_load_all_products(driver, raw_data_dir, category_info=None, log_f
             except:
                 continue
 
-        log_func(f"Scroll {scroll_count + 1}: Found {len(products)} product links on page")
+        log_func(f"Scroll {scroll_count + 1}: Found {len(products)} product links visible")
 
         found_new = False
         
         # Process each product by URL
         for href in current_batch_urls:
-            if global_counter and global_counter.is_reached():
-                 break
-            
             # Skip if already processed
             if not href or href in processed_urls:
                 continue
@@ -292,95 +278,23 @@ def scroll_and_load_all_products(driver, raw_data_dir, category_info=None, log_f
             processed_urls.add(href)
             found_new = True
 
-            # Re-acquire the element fresh from the DOM for every iteration
+            # Re-acquire element
             try:
                 href_suffix = href.split('/')[-1]
                 link = driver.find_element(By.CSS_SELECTOR, f'a[data-test-id="CardLinkButton"][href$="{href_suffix}"]')
-                # Scroll to it to keep visual progress and ensure it's "focused"
+                # Focus
                 driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", link)
             except Exception:
                 log_func(f"Could not find element for {href}, skipping...")
                 continue
-
-            # Skip if HTML file already exists
-            filename = get_filename_from_url(href)
-            filepath = os.path.join(raw_data_dir, filename)
-            if os.path.exists(filepath):
-                log_func(f"Skipping (already saved): {href}")
-                continue
-
-            # Check availability
-            if not crawler_global.check_item_availability(link):
-                log_func(f"Skipping (not available): {href}")
-                continue
-
-            # Check limit before trying to process
-            if not global_counter.increment():
-                log_func("Global limit reached (at increment). Stopping.")
-                break
-                            
-            log_func(f"Clicking product: {href}")
             
+            # Invoke Callback
             try:
-                # Click the product link
-                crawler_global.safe_click(driver, link)
-                
-                # Check for unavailability dialog immediately after click
-                if crawler_global.handle_unavailable_dialog(driver, log_func):
-                    continue
-
-                # Wait for product page to load
-                if crawler_product.wait_for_product_page_ready(driver, log_func):
-                    # Get the HTML content
-                    html_content = driver.page_source
-                    
-                    # Save HTML to file with category metadata
-                    saved_path = save_html_to_file(html_content, href, raw_data_dir, category_info, log_func)
-                    
-                    if saved_path:
-                        product_data_list.append({'product_url': href, 'saved_file': saved_path})
-                        log_func(f"Saved product HTML: {href}")
-                    else:
-                        log_func(f"Failed to save HTML for: {href}")
-                else:
-                    log_func(f"Failed to load product page for: {href}")
-                
-                # Close the product modal/page (press ESC or click close button)
-                try:
-                    driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                    # Wait for the modal backdrop to disappear to avoid click interception
-                    try:
-                        WebDriverWait(driver, 5).until(
-                            EC.invisibility_of_element_located((By.CSS_SELECTOR, '.cb_ModalBase_Backdrop_954'))
-                        )
-                    except:
-                        pass
-                    time.sleep(0.3)
-                except:
-                    pass
-                
+                callback(driver, link, href)
             except Exception as e:
-                log_func(f"Error processing product: {e}")
-                # Try to recover by pressing ESC
-                try:
-                    driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                    # Wait for the modal backdrop to disappear
-                    try:
-                        WebDriverWait(driver, 5).until(
-                            EC.invisibility_of_element_located((By.CSS_SELECTOR, '.cb_ModalBase_Backdrop_954'))
-                        )
-                    except:
-                        pass
-                    time.sleep(0.3)
-                except:
-                    pass
+                log_func(f"Error in callback for {href}: {e}")
                 continue
 
-        if global_counter and global_counter.is_reached():
-             break
-
-        log_func(f"Scroll {scroll_count + 1}: Extracted {len(product_data_list)} TOTAL products")
-        
         # Check if new products loaded
         if not found_new:
             log_func(f"No new products after {scroll_count + 1} scrolls. Finished loading.")
@@ -390,31 +304,93 @@ def scroll_and_load_all_products(driver, raw_data_dir, category_info=None, log_f
     
     if scroll_count >= max_scrolls:
         log_func(f"Reached maximum scroll limit ({max_scrolls})")
+
+
+def scroll_and_load_all_products(driver, raw_data_dir, category_info=None, log_func=print, global_counter=None, max_scrolls=50, console=None):
+    """
+    Full crawl: visits each product, saves HTML.
+    """
+    product_data_list = []
     
+    def save_callback(d, element, href):
+        # Check global limit
+        if global_counter and global_counter.is_reached():
+             return
+
+        # Skip if already saved (optimization)
+        filename = get_filename_from_url(href)
+        filepath = os.path.join(raw_data_dir, filename)
+        if os.path.exists(filepath):
+            log_func(f"Skipping (already saved): {href}")
+            return
+
+        # Check availability
+        if not crawler_global.check_item_availability(element):
+            log_func(f"Skipping (not available): {href}")
+            return
+        
+        # Check limit increment
+        if global_counter and not global_counter.increment():
+            log_func("Global limit reached.")
+            return
+
+        log_func(f"Clicking product: {href}")
+        
+        try:
+            crawler_global.safe_click(d, element)
+            
+            if crawler_global.handle_unavailable_dialog(d, log_func):
+                return
+
+            if crawler_product.wait_for_product_page_ready(d, log_func):
+                html_content = d.page_source
+                saved_path = save_html_to_file(html_content, href, raw_data_dir, category_info, log_func)
+                
+                if saved_path:
+                    product_data_list.append({'product_url': href, 'saved_file': saved_path})
+                    log_func(f"Saved product HTML: {href}")
+                    if console:
+                        console.increment()
+                else:
+                    log_func(f"Failed to save HTML for: {href}")
+            else:
+                log_func(f"Failed to load product page for: {href}")
+            
+            # Close modal
+            try:
+                d.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                try:
+                    WebDriverWait(d, 5).until(
+                        EC.invisibility_of_element_located((By.CSS_SELECTOR, '.cb_ModalBase_Backdrop_954'))
+                    )
+                except:
+                    pass
+                time.sleep(0.3)
+            except:
+                pass
+                
+        except Exception as e:
+            log_func(f"Error processing product: {e}")
+            # Recovery
+            try:
+                d.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                time.sleep(0.5)
+            except:
+                pass
+
+    iterate_category_products(driver, log_func, save_callback, max_scrolls)
     return product_data_list
 
 
 def click_product_link(driver, href):
-    """
-    Finds and clicks a product link by its href.
-    
-    Args:
-        driver: Selenium WebDriver instance
-        href: Product URL to click
-    
-    Returns:
-        bool: True if click successful, False otherwise
-    """
+    # Legacy/Unused maybe, but keeping for compatibility if imported elsewhere
     try:
-        # Find the link with matching href
         links = driver.find_elements(By.CSS_SELECTOR, 'a[href*="itemid-"]')
-        
         for link in links:
             if link.get_attribute('href') == href:
                 crawler_global.safe_click(driver, link)
                 time.sleep(0.5)
                 return True
-        
         return False
     except:
         return False

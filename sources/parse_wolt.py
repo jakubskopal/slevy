@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import sys
-import os
 
 from wolt.parser import WoltParser, VENUES
 from console import Console

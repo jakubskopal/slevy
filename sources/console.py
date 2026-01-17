@@ -15,6 +15,16 @@ class Console:
         self.bar_update_interval = 1.0  # Update max once per second for both modes
         self._lock = threading.Lock()
 
+    def increment(self, amount=1):
+        with self._lock:
+            self.current += amount
+            if self.use_colors:
+                self._draw_bar_unlocked()
+    
+    def set_total(self, total):
+        with self._lock:
+            self.total = total
+
     def start(self):
         with self._lock:
             self.start_time = time.time()
@@ -35,7 +45,8 @@ class Console:
         with self._lock:
             self.current = current
             self.last_stats = stats
-            self._draw_bar_unlocked(force=force)
+            if self.use_colors:
+                self._draw_bar_unlocked(force=force)
 
     def _draw_bar_unlocked(self, force=False):
         now = time.time()

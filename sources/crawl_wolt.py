@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import sys
-import os
 from functools import partial
 
 from wolt.crawler import WoltCrawler, VENUES

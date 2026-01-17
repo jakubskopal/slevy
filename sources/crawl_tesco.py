@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import sys
 import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
@@ -42,11 +41,15 @@ def main():
     
     global_counter = GlobalCounter(args.limit)
     driver_factory = partial(create_driver, headless=args.headless, browser_type=args.browser)
+    
+    from drivers import DriverPool
+    pool = DriverPool(driver_factory)
 
     try:
         with ThreadPoolExecutor(max_workers=args.workers) as executor:
-            executor.map(lambda x: run_worker(x[1], state, console, driver_factory, global_counter, x[0], args.limit), enumerate(pending))
+            executor.map(lambda x: run_worker(x[1], state, console, pool, global_counter, x[0], args.limit), enumerate(pending))
     finally:
+        pool.quit_all()
         console.finish()
         console.log("All workers finished.")
 

@@ -132,13 +132,14 @@ class GlobalCounter:
 
 
 class TescoWorker:
-    def __init__(self, state, console=None, base_dir="data/tesco_raw", driver_factory=None, global_counter=None):
+    def __init__(self, state, console=None, base_dir="data/tesco_raw", driver_pool=None, global_counter=None):
         self.start_url = "https://nakup.itesco.cz/groceries/cs-CZ/"
         self.state = state
         self.console = console
         self.base_dir = base_dir
         self.global_counter = global_counter
-        self.driver = driver_factory()
+        self.driver_pool = driver_pool
+        self.driver = driver_pool.acquire()
 
     # extract_product_data moved to crawler_product.py
 
@@ -301,11 +302,11 @@ class TescoWorker:
 
     def quit(self):
         """
-        Closes the browser driver instance.
+        Releases the browser driver instance back to the pool.
         """
-        self.driver.quit()
+        self.driver_pool.release(self.driver)
 
-def run_worker(cat_name, state, console, driver_factory, global_counter, index, limit):
+def run_worker(cat_name, state, console, driver_pool, global_counter, index, limit):
     """
     Worker entry point that manages the lifecycle of a single category crawl, including
     restarts on failure.
@@ -317,7 +318,7 @@ def run_worker(cat_name, state, console, driver_factory, global_counter, index, 
         if global_counter and global_counter.is_reached():
              break
 
-        worker = TescoWorker(state, console=console, driver_factory=driver_factory, global_counter=global_counter)
+        worker = TescoWorker(state, console=console, driver_pool=driver_pool, global_counter=global_counter)
         try:
             success = worker.crawl_category(cat_name, limit=limit)
             if success:

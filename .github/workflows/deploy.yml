@@ -19,15 +19,15 @@ jobs:
         store: [albert, billa, globus, tesco, kupi]
         include:
           - store: albert
-            crawl_args: --headless --workers 4 --color --limit 0
+            crawl_args: --headless --workers 4 --limit 0
           - store: billa
-            crawl_args: --headless --workers 4 --color --limit 0
+            crawl_args: --headless --workers 4 --limit 0
           - store: globus
-            crawl_args: --headless --workers 4 --color --limit 0
+            crawl_args: --headless --workers 4 --limit 0
           - store: tesco
-            crawl_args: --headless --workers 4 --color
+            crawl_args: --headless --workers 4
           - store: kupi
-            crawl_args: --workers 4 --color
+            crawl_args: --workers 4
             
     steps:
       - name: Checkout
@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: data/${{ matrix.store }}_raw
-          key: ${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}
+          key: ${{ runner.os }}-${{ matrix.store }}-raw-last
           restore-keys: |
             ${{ runner.os }}-${{ matrix.store }}-raw-
 
@@ -69,9 +69,10 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: data/${{ matrix.store }}_raw
-          key: ${{ runner.os }}-${{ matrix.store }}-raw-${{ github.run_id }}
+          key: ${{ runner.os }}-${{ matrix.store }}-raw-last
 
       - name: Upload Raw Data
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: raw-${{ matrix.store }}
@@ -87,15 +88,15 @@ jobs:
         include:
           # Use same matrix include logic to get parser args
           - store: albert
-            parse_args: --workers 4 --color
+            parse_args: --workers 4
           - store: billa
-            parse_args: --workers 4 --color
+            parse_args: --workers 4
           - store: globus
-            parse_args: --workers 4 --color
+            parse_args: --workers 4 --browser firefox
           - store: tesco
-            parse_args: --color
+            parse_args:
           - store: kupi
-            parse_args: --color
+            parse_args:
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import json
-import time
 from . import crawler_global
 
 def wait_for_product_page_ready(driver, log_func=print):
