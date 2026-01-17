@@ -7,6 +7,7 @@ from console import Console
 def main():
     parser = argparse.ArgumentParser(description="Tesco Parser")
     parser.add_argument("--color", action="store_true", help="Show ANSI progress bar")
+    parser.add_argument("--workers", type=int, default=None, help="Number of worker processes (default: CPU count)")
     args = parser.parse_args()
 
     console = Console(total=0, use_colors=args.color)
@@ -14,7 +15,7 @@ def main():
     
     try:
         parser = TescoParser(console=console)
-        parser.run()
+        parser.run(workers=args.workers)
     finally:
         console.finish()
 

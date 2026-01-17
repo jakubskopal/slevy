@@ -124,9 +124,9 @@ jobs:
           - store: billa
             parse_args: --workers 4
           - store: globus
-            parse_args: --workers 6
+            parse_args: --workers 4
           - store: tesco
-            parse_args:
+            parse_args: --workers 4
           - store: kupi
             parse_args:
     steps:
