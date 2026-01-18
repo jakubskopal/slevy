@@ -159,7 +159,7 @@ class WoltWorker:
         if self.global_counter.is_reached():
             return True
 
-        log_func(f"Worker starting category")
+        log_func(f"Worker starting category: {' > '.join(cat_names)}", notice=True)
         
         # Navigate to category
         if not crawler_category.navigate_to_category(self.driver, cat_url, log_func):
@@ -196,10 +196,10 @@ def run_worker(cat_info, state, start_url, raw_data_dir, console, driver_pool, g
     
     # Define common log method with category prefix
     prefix = f"[{' < '.join(cat_names)}] "
-    def log_func(msg):
+    def log_func(msg, notice=False):
         full_msg = f"{prefix}{msg}"
         if console:
-            console.log(full_msg)
+            console.log(full_msg, notice=notice)
         else:
             print(full_msg)
     

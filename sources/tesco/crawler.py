@@ -143,12 +143,12 @@ class TescoWorker:
 
     # extract_product_data moved to crawler_product.py
 
-    def log(self, msg):
+    def log(self, msg, notice=False):
         """
         Logs a message to the console handler or standard output.
         """
         if self.console:
-            self.console.log(msg)
+            self.console.log(msg, notice=notice)
         else:
             print(msg)
 
@@ -160,7 +160,7 @@ class TescoWorker:
         if self.global_counter and self.global_counter.is_reached():
              return True
 
-        self.log(f"Worker starting category: {cat_name}")
+        self.log(f"Worker starting category: {cat_name}", notice=True)
         if not crawler_category.navigate_to_category(self.driver, cat_name, self.log):
             return False
 

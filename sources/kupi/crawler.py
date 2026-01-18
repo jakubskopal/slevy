@@ -271,14 +271,14 @@ class KupiCrawler:
              console = DummyConsole()
              console.total = 0
 
-        def log(msg):
-            console.log(msg)
+        def log(msg, notice=False):
+            console.log(msg, notice=notice)
         
         # Thread-safe log wrapper to pass to workers
         def worker_log(msg):
             log(msg)
 
-        log(f"Starting crawl at {self.start_url}")
+        log(f"Starting crawl at {self.start_url}", notice=True)
         
         console.update(0, "Init...")
         

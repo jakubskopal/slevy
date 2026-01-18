@@ -1,3 +1,4 @@
+import os
 import sys
 import shutil
 import time
@@ -30,8 +31,12 @@ class Console:
             self.start_time = time.time()
             self.last_update_time = 0
 
-    def log(self, msg):
+    def log(self, msg, notice=False):
         with self._lock:
+            if os.environ.get("GITHUB_ACTIONS") and notice:
+                 clean_msg = msg.replace('\n', ' ').strip()
+                 print(f"::notice::{clean_msg}", flush=True)
+
             if self.use_colors:
                 # Clear line, print msg, redraw bar
                 sys.stdout.write("\r\033[K")
