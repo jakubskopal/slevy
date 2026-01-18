@@ -59,6 +59,13 @@
                     },
                     "description": "Hierarchical list of categories belonging to the product"
                 },
+                "category_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Stable IDs of categories in the path"
+                },
                 "prices": {
                     "type": "array",
                     "items": {
@@ -196,11 +203,11 @@
                     "description": "Count of products/offers per store"
                 },
                 "categories": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CategoryNode"
                     },
-                    "description": "Count of products per category"
+                    "description": "Hierarchical list of categories"
                 },
                 "brands": {
                     "type": "object",
@@ -208,6 +215,32 @@
                         "type": "integer"
                     },
                     "description": "Count of products per brand"
+                }
+            }
+        },
+        "CategoryNode": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "count",
+                "children"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CategoryNode"
+                    }
                 }
             }
         }

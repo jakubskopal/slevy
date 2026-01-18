@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "cp ../data/*.result.json public/ && python3 ../scripts/generate_index.py --data-dir ../data --target-dir public",
+    "prebuild": "cp ../data/*.processed.json public/ && python3 ../scripts/generate_index.py --data-dir ../data --target-dir public",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

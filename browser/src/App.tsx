@@ -22,6 +22,7 @@ function Shop() {
   const filters = useMemo<FilterState>(() => ({
     brands: new Set(searchParams.getAll('brands')),
     categories: new Set(searchParams.getAll('categories')),
+    excludeCategories: new Set(searchParams.getAll('exclude_categories')),
     stores: new Set(searchParams.getAll('stores'))
   }), [searchParams])
 
@@ -97,7 +98,49 @@ function Shop() {
     })
   }
 
+  // Tri-state toggle: Neutral -> Include -> Exclude -> Neutral
+  const toggleCategory = (id: string, forceInclude = false) => {
+    updateParams(params => {
+      const inc = new Set(params.getAll('categories'))
+      const exc = new Set(params.getAll('exclude_categories'))
+
+      if (forceInclude) {
+        // Used for Title Click: Clear other included, set this to include, KEEP excluded
+        params.delete('categories')
+        params.append('categories', id)
+        return
+      }
+
+      const isInc = inc.has(id)
+      const isExc = exc.has(id)
+
+      // State Machine
+      if (!isInc && !isExc) {
+        // Neutral -> Include
+        inc.add(id)
+      } else if (isInc) {
+        // Include -> Exclude
+        inc.delete(id)
+        exc.add(id)
+      } else if (isExc) {
+        // Exclude -> Neutral
+        exc.delete(id)
+      }
+
+      // Write back
+      params.delete('categories')
+      inc.forEach(v => params.append('categories', v))
+
+      params.delete('exclude_categories')
+      exc.forEach(v => params.append('exclude_categories', v))
+    })
+  }
+
   const toggleFilter = (type: keyof FilterState, value: string) => {
+    if (type === 'categories') {
+      toggleCategory(value)
+      return
+    }
     updateParams(params => {
       const current = new Set(params.getAll(type))
       if (current.has(value)) current.delete(value)
@@ -108,23 +151,22 @@ function Shop() {
     })
   }
 
-  const setFilterSet = (type: keyof FilterState, values: Set<string>) => {
-    updateParams(params => {
-      params.delete(type)
-      values.forEach(v => params.append(type, v))
-    })
-  }
+
 
   const resetFilters = () => {
     updateParams(params => {
       params.delete('brands')
       params.delete('categories')
+      params.delete('exclude_categories')
       params.delete('stores')
     })
   }
 
   const clearSection = (type: keyof FilterState) => {
-    updateParams(params => params.delete(type))
+    updateParams(params => {
+      params.delete(type)
+      if (type === 'categories') params.delete('exclude_categories')
+    })
   }
 
   const setSortOption = (val: string) => {
@@ -140,12 +182,16 @@ function Shop() {
     let filtered = data.products.filter(p => {
       if (filters.brands.size > 0 && p.brand && !filters.brands.has(p.brand)) return false
 
+      // Exclude Logic (Precedence): If product matches ANY excluded category, hide it.
+      if (filters.excludeCategories.size > 0) {
+        const productIds = p.category_ids || []
+        if (productIds.some(id => filters.excludeCategories.has(id))) return false
+      }
+
+      // Include Logic: If categories selected, product must match AT LEAST ONE.
       if (filters.categories.size > 0) {
-        const selectedMatches = p.categories.map((c, idx) => ({ name: c, idx })).filter(m => filters.categories.has(m.name))
-        if (selectedMatches.length === 0) return false
-        const deepestMatch = selectedMatches[selectedMatches.length - 1]
-        const hasSelectedAncestor = selectedMatches.some(m => m.idx < deepestMatch.idx)
-        if (hasSelectedAncestor) return false
+        const productIds = p.category_ids || []
+        if (!productIds.some(id => filters.categories.has(id))) return false
       }
 
       if (filters.stores.size > 0) {
@@ -217,12 +263,12 @@ function Shop() {
           onSourceChange={(name) => navigate('/' + name)}
           filters={filters}
           toggleFilter={toggleFilter}
-          setFilterSet={setFilterSet}
+          onTitleClick={(id) => toggleCategory(id, true)}
           resetFilters={resetFilters}
           clearSection={clearSection}
           brands={brands}
           stores={stores}
-          products={data.products}
+          categories={data.metadata.categories}
         />
 
         <main>

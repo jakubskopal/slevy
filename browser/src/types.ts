@@ -15,6 +15,7 @@ export interface Product {
     brand: string | null
     image_url: string | null
     categories: string[]
+    category_ids: string[]
     prices: Price[]
     description?: string | null
 }
@@ -23,7 +24,7 @@ export interface Metadata {
     total_products: number
     generated_at: string
     brands: Record<string, number> | string[]
-    categories: Record<string, number> | string[]
+    categories: CategoryNode[]
     stores: Record<string, number> | string[]
 }
 
@@ -40,12 +41,14 @@ export interface Source {
 export interface FilterState {
     brands: Set<string>
     categories: Set<string>
+    excludeCategories: Set<string>
     stores: Set<string>
 }
 
 // Category Tree Node
-export interface CategoryNodeDef {
+export interface CategoryNode {
+    id: string
     name: string
     count: number
-    children: Record<string, CategoryNodeDef>
+    children: CategoryNode[]
 }

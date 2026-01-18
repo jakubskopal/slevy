@@ -163,12 +163,23 @@ jobs:
     needs: parse
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Download All Results
         uses: actions/download-artifact@v4
         with:
           pattern: result-*
           path: data
           merge-multiple: true
+
+      - name: Run Processing Pipeline
+        run: ./scripts/processing --default
 
       - name: List Collected Files
         run: ls -R data/
@@ -177,7 +188,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: all-results
-          path: data/*.result.json
+          path: |
+            data/*.processed.json
+            data/*.result.json
 
   build-deploy:
     needs: collect

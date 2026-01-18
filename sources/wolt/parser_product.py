@@ -16,80 +16,7 @@ def parse_price(price_text):
             return None
     return None
 
-def extract_brand(name):
-    if not name: return None
-    
-    # Known multi-word brands or prefixes that need continuation
-    known_brands = [
-        "Nature's Promise", "World's Market", "7Days", "Coca-Cola", "Dr. Oetker",
-        "Česká chuť", "Česká Chuť", "Albert Excellent", "Bersi Dessert",
-        "Ben & Jerry's", "Captain Morgan", "Jack Daniel's", "Johnnie Walker",
-        "Rio Mare", "Fresh Bistro", "Garden Gourmet", "Rice Up", "Fine Crunchy",
-        "A.T. International", "Bad Reichenhaller", "Bear Beer", "Brise de France",
-        "Cavit Prosecco", "Château", "Cute Baby", "Day Up", "Golden Bay",
-        "Habánské sklepy", "Maison Castel", "Pearl River Bridge", "Perfect Fit",
-        "St. Dalfour", "Villa Garducci", "World´s Market", "World‘s Market", "World’s Market",
-        "Franz Josef Kaiser", "Le & Co", "Le Coq", "La Bohéma", "La Bonta Italiana",
-        "La Vida Bio", "Velkopopovický Kozel", "Pilsner Urquell", "Stará myslivecká",
-        "Tatranský čaj", "Tatra", "Mlékárna Kunín", "Jihočeská Niva", "Billa", "Globus",
-        # New additions
-        "Váš Výběr", "Jeden Tag", "Bio Nebio", "Tesco Finest", "Tesco Standard", "My Price"
-        # EXPLICIT EXCEPTION: "Šnek Bob" (Bob Snail) is NOT considered a brand per user request.
-    ]
-    for kb in known_brands:
-        if name.lower().startswith(kb.lower()): return kb
-        
-    words = name.split()
-    if not words: return None
-    
-    # Blacklist of generic terms that are never brands when appearing alone
-    blacklist = [
-        "Šnek", "Mléko", "Jogurt", "Voda", "Pivo", "Pečivo", "Rohlík", "Houska",
-        "Bageta", "Brambory", "Croissant", "Kachna", "Kefírové", "Kuřecí", "Mrkev",
-        "Okurky", "Originální", "Paprika", "Svíčka", "Těsto", "Vepřová", "Zlaté",
-        "Salát", "Pomazánka", "Sýr", "Šunka", "Tvaroh", "Mléčný", "Čerstvá", "Bio",
-        "Zelí", "Žluté",
-        # New blacklist items (non-food/generic)
-        "Vepřové", "Hovězí", "Krůtí",
-        "Jídelní", "Sedací", "Konferenční", "Psací", "Noční", "Stolní", "Rohov", "Obývací",
-        "Šatní", "Úložný", "Botník", "Předsíňov",
-        "Zahradní", "Stropní", "Nástěnný", "Solární",
-        "Sprchový", "Kuchyňsk", "Kuchyňský",
-        "Plastový", "Plastové", "Nerezový", "Skleněn", "Kameninový",
-        "Organizér", "Koš", "Pytle", "Svícen", "Taštička",
-        "Herní", "Kancel", "Univerz", "Cestovní", "Sportovní",
-        "Jarní", "Letní", "Podzimní", "Zimní",
-        "Čerstvé", "Mražená", "Mražené",
-        "Smažený", "Smažené", "Pečený", "Pečené",
-        "Dětské", "Dětská"
-    ]
-    
-    brand_parts = []
-    for i, word in enumerate(words):
-        clean = word.replace("´", "'").replace("‘", "'").strip(",.:\"'")
-        if not clean: continue
-        
-        if clean.isupper() and len(clean) > 1:
-            brand_parts.append(clean)
-            continue
-        elif not brand_parts:
-            if clean in blacklist: break
-            if clean[0].isupper() or clean[0].isdigit():
-                brand_parts.append(clean)
-                # Generic prefixes that might be part of a brand
-                if clean.lower() in ["albert", "česká", "jihočeská", "billa", "globus"] and i+1 < len(words):
-                    continue 
-                break
-            else:
-                break
-        else:
-            if clean.isupper() and len(clean) > 1:
-                brand_parts.append(clean)
-                continue
-            else:
-                break
-    
-    return " ".join(brand_parts) if brand_parts else None
+
 
 def extract_preparsed_data(content):
     """Extract metadata injected by the crawler (META_JSON)."""
@@ -118,7 +45,7 @@ def parse_product_file(filepath, store_name):
     name = name_elem.get_text(strip=True) if name_elem else "Unknown"
 
     # 2. Brand
-    brand = extract_brand(name)
+    brand = None # Will be enriched in post-processing if missing
 
     # 3. Description
     desc_elem = modal.select_one('[data-test-id="product-modal.description"]') or modal.select_one('[class*="Description"]')

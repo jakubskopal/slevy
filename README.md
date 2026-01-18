@@ -94,6 +94,38 @@ The project employs a Map-Reduce inspired architecture for parsing to handle lar
 
 This separation allows for rapid iteration on parsing logic without re-crawling the web pages.
 
+
+## Data Processing Pipeline
+
+Raw data extracted by parsers (`*.result.json`) undergoes a series of transformations before being consumed by the browser application. This pipeline is managed by `scripts/processing`.
+
+### Usage
+Run the default pipeline:
+```bash
+./scripts/processing --default
+```
+Which executes the following steps in order:
+
+### Pipeline Steps
+
+1.  **Filter for Food** (`processing/filter_for_food.py`)
+    *   **Input**: `*.result.json`
+    *   **Action**: Filters products to keep only food-related items using a keyword whitelist (positive) and blacklist (negative).
+    *   **Output**: `*.001.filter_for_food.json`
+
+2.  **Enrich Brands** (`processing/enrich_brands.py`)
+    *   **Input**: `*.001.filter_for_food.json`
+    *   **Action**: Guesses missing brand names from product titles using heuristics (e.g., "Coca-Cola Zero" -> Brand: "Coca-Cola") if the source didn't provide structured brand data.
+    *   **Output**: `*.002.enrich_brands.json`
+
+3.  **Build Categories** (`processing/build_categories.py`)
+    *   **Input**: `*.002.enrich_brands.json`
+    *   **Action**: 
+        *   Constructs a hierarchical category tree from the flat product list.
+        *   Assigns stable IDs to categories.
+        *   Tags each product with the IDs of its category lineage.
+    *   **Output**: `*.003.build_categories.json` -> Final `*.processed.json`
+
 ## Browser Application
 
 The `browser/` directory contains a modern web application for visualizing the aggregated data.
@@ -101,7 +133,7 @@ The `browser/` directory contains a modern web application for visualizing the a
 *   **Stack**: React + Vite
 *   **Name**: Agravity Deals
 *   **Functionality**:
-    *   **Data Source**: Dynamically loads data from `data/` via `index.json`, allowing users to switch between sources (e.g., Kupi, Tesco, Albert) via a dropdown.
+    *   **Data Source**: Dynamically loads processed data (`*.processed.json`) via `index.json`.
     *   **Filtering**:
         *   **Stores**: Local filtering by specific retailer.
         *   **Categories**: Hierarchical tree-based filtering with support for inclusion/exclusion logic.
@@ -117,8 +149,8 @@ The `browser/` directory contains a modern web application for visualizing the a
     *   **Always** run `nvm use` in the `browser/` directory to load the correct version from `.nvmrc`.
     *   If you don't have `nvm`, check `.nvmrc` for the required version and install it manually.
 3.  Install dependencies: `npm install`.
-4.  **Data Setup**: The build process automatically copies `data/*.result.json` to `public/` and generates the index.
-    *   Ensure you have generated data in `../data/`.
+4.  **Data Setup**: The build process automatically copies `data/*.processed.json` to `public/` and generates the index.
+    *   Ensure you have generated data in `../data/` (run `./scripts/processing --default`).
 5.  Start dev server: `npm run dev`.
 
 ## Python Environment
@@ -134,10 +166,13 @@ The project uses **GitHub Actions** for daily data updates and deployment.
 *   **Workflow**: `.github/workflows/deploy.yml`
 *   **Schedule**: Runs automatically at **2:00 AM** daily.
 *   **Pipeline**:
-    1.  **Crawl Phase**: Runs crawlers for all defined stores in parallel (matrix strategy). It caches raw HTML data to speed up future runs and recover from failures.
-    2.  **Parse Phase**: downloads raw data and parses it into JSON.
-    3.  **Collect Phase**: Aggregates all `*.result.json` files.
-    4.  **Deploy Phase**: Builds the React application with the new data and deploys it to **GitHub Pages**.
+    1.  **Crawl Phase**: Runs crawlers for all defined stores in parallel.
+    2.  **Parse Phase**: Parses raw HTML into JSON (`*.result.json`).
+    3.  **Collect & Process Phase**: 
+        *   Aggregates results.
+        *   Runs the **Processing Pipeline** (`./scripts/processing --default`).
+        *   Uploads both raw (`*.result.json`) and processed (`*.processed.json`) data as artifacts.
+    4.  **Deploy Phase**: Builds the React application with the **processed** data and deploys it to **GitHub Pages**.
 
 ### Adding a New Data Source
 
@@ -162,5 +197,9 @@ Failure to do this will result in the new store being ignored by the daily autom
 
 **Note**: This `README.md` and the `sources/schema.json` are maintained by the AI assistant.
 
-*   **When to update**: If you add a new data source, change the crawler architecture, modify the output schema, or change how the browser app consumes data.
+*   **When to update**: 
+    *   If you add a new data source.
+    *   If you change the crawler architecture.
+    *   If you modify the output schema.
+    *   **If you add or significantly change a step in the Data Processing Pipeline.**
 *   **How to update**: Explicitly ask the assistant to "update the project README" after making your code changes.

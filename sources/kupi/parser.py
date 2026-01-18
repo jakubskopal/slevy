@@ -537,15 +537,10 @@ class KupiParser:
         
         # Collect all unique store names and categories with counts
         store_counts = Counter()
-        category_counts = Counter()
+
         brand_counts = Counter()
         
         for p in self.products:
-            # Categories
-            cats = p.get('categories', [])
-            for c in cats:
-                category_counts[c] += 1
-                
             # Brands
             if p.get('brand'):
                 brand_counts[p['brand']] += 1
@@ -566,7 +561,7 @@ class KupiParser:
                 "total_products": len(self.products),
                 "generated_at": datetime.now().isoformat(),
                 "stores": dict(sorted(store_counts.items(), key=lambda item: item[1], reverse=True)),
-                "categories": dict(sorted(category_counts.items(), key=lambda item: item[1], reverse=True)),
+
                 "brands": dict(sorted(brand_counts.items(), key=lambda item: item[1], reverse=True))
             }
         }

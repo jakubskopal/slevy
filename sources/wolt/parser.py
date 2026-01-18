@@ -95,9 +95,7 @@ class WoltParser:
         for product in product_map.values():
              if product.get('brand'):
                  brands[product['brand']] += 1
-             if product.get('categories'):
-                 for cat in product['categories']:
-                    categories[cat] += 1
+
              if product.get('prices'):
                  for p in product['prices']:
                      if p.get('store_name'):
@@ -109,7 +107,7 @@ class WoltParser:
                 "total_products": len(product_map),
                 "generated_at": datetime.now().isoformat(),
                 "stores": dict(sorted(stores.items())),
-                "categories": dict(sorted(categories.items())),
+
                 "brands": dict(sorted(brands.items()))
             }
         }

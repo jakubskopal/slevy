@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Processing Orchestrator
+# Usage: ./scripts/processing <step1> <step2> ...
+# Example: ./scripts/processing filter_for_food build_categories
+
+set -e
+
+DATA_DIR="data"
+CURRENT_INPUT_SUFFIX="result"
+STEP_COUNTER=1
+
+if [ "$1" == "--default" ]; then
+    set -- filter_for_food enrich_brands build_categories
+fi
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 <step1> <step2> ... OR $0 --default"
+    exit 1
+fi
+
+echo "Starting processing pipeline with steps: $@"
+
+for STEP_NAME in "$@"; do
+    # Format counter with 3 digits zero-padding
+    PADDED_COUNTER=$(printf "%03d" $STEP_COUNTER)
+    CURRENT_OUTPUT_SUFFIX="${PADDED_COUNTER}.${STEP_NAME}"
+    
+    echo "---------------------------------------------------"
+    echo "Running Step ${STEP_COUNTER}: ${STEP_NAME}"
+    echo "Input Suffix:  .${CURRENT_INPUT_SUFFIX}.json"
+    echo "Output Suffix: .${CURRENT_OUTPUT_SUFFIX}.json"
+    
+    python3 processing/${STEP_NAME}.py --input ${CURRENT_INPUT_SUFFIX} --output ${CURRENT_OUTPUT_SUFFIX} --data-dir ${DATA_DIR}
+    
+    CURRENT_INPUT_SUFFIX=${CURRENT_OUTPUT_SUFFIX}
+    STEP_COUNTER=$((STEP_COUNTER + 1))
+done
+
+echo "---------------------------------------------------"
+echo "Processing complete."
+echo "Finalizing output: Copying *.${CURRENT_INPUT_SUFFIX}.json onto *.processed.json"
+
+# Copy final files to .processed.json
+# Note: This assumes the files adhere to the naming convention <basename>.<suffix>.json
+# We iterate over files matching the last suffix in data directory
+for f in ${DATA_DIR}/*.${CURRENT_INPUT_SUFFIX}.json; do
+    if [ -f "$f" ]; then
+        # Construct target filename by replacing the suffix
+        BASE_NAME=${f%.${CURRENT_INPUT_SUFFIX}.json}
+        TARGET_FILE="${BASE_NAME}.processed.json"
+        
+        echo "Copying $f -> $TARGET_FILE"
+        cp "$f" "$TARGET_FILE"
+    fi
+done
+
+echo "Done."

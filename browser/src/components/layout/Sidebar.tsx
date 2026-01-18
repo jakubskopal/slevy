@@ -1,5 +1,5 @@
 import React from 'react'
-import { FilterState, Product, Source, Metadata } from '../../types'
+import { FilterState, Source, CategoryNode } from '../../types'
 import { FilterGroup } from '../filters/FilterGroup'
 import { CategoryTree } from '../filters/CategoryTree'
 import { SourceSelector } from '../filters/SourceSelector'
@@ -10,12 +10,12 @@ interface SidebarProps {
     onSourceChange: (name: string) => void
     filters: FilterState
     toggleFilter: (type: keyof FilterState, value: string) => void
-    setFilterSet: (type: keyof FilterState, values: Set<string>) => void
     resetFilters: () => void
     clearSection: (type: keyof FilterState) => void
     brands: Record<string, number>
     stores: Record<string, number>
-    products: Product[]
+    categories: CategoryNode[]
+    onTitleClick: (id: string) => void
 }
 
 export const Sidebar = ({
@@ -24,12 +24,12 @@ export const Sidebar = ({
     onSourceChange,
     filters,
     toggleFilter,
-    setFilterSet,
     resetFilters,
     clearSection,
     brands,
     stores,
-    products
+    categories,
+    onTitleClick
 }: SidebarProps) => {
     return (
         <aside>
@@ -56,10 +56,10 @@ export const Sidebar = ({
             )}
 
             <CategoryTree
-                products={products}
+                categories={categories}
                 filters={filters}
                 toggleFilter={toggleFilter}
-                setFilterSet={setFilterSet}
+                onTitleClick={onTitleClick}
                 onClear={() => clearSection('categories')}
             />
 
