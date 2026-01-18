@@ -76,6 +76,24 @@ This project relies heavily on **Selenium WebDriver** for crawling.
     *   **Parallelism**: Configurable `ThreadExecutor` allows running multiple browser windows simultaneously (`--workers N`).
     *   **Headless**: Supports running in `headless=new` mode for efficiency on servers.
 
+## Efficient Map-Reduce Parsing Strategy
+
+The project employs a Map-Reduce inspired architecture for parsing to handle large datasets efficiently and robustly.
+
+1.  **Map Phase (Crawling)**:
+    *   The crawlers treat each page as an independent unit of work.
+    *   Raw HTML of each page is saved individually as a compressed file (e.g., `item_123.html.gz`) in a `raw_data` directory.
+    *   This ensures that if the crawler crashes, no progress is lost, and individual pages can be re-crawled or inspected without affecting the rest.
+
+2.  **Reduce Phase (Parsing)**:
+    *   The parser runs as a separate offline process.
+    *   It iterates over all files in the `raw_data` directory using `glob`.
+    *   **Parallel Processing**: It utilizes `ProcessPoolExecutor` to parse thousands of HTML files in parallel, maximizing CPU usage.
+    *   Each worker extracts data from a single file and returns a list of product objects.
+    *   **Aggregation and Deduplication**: The main process collects lists from all workers, flattens them, and performs deduplication (e.g., merging duplicate products found on different pages) before writing the final JSON output.
+
+This separation allows for rapid iteration on parsing logic without re-crawling the web pages.
+
 ## Browser Application
 
 The `browser/` directory contains a modern web application for visualizing the aggregated data.
@@ -109,10 +127,40 @@ For running crawlers and scripts in `sources/`:
 *   Create/Activate: `python3 -m venv .venv` and `source .venv/bin/activate`.
 *   Install requirements: `pip install -r requirements.txt`.
 
+## Continuous Deployment & Release Process
+
+The project uses **GitHub Actions** for daily data updates and deployment.
+
+*   **Workflow**: `.github/workflows/deploy.yml`
+*   **Schedule**: Runs automatically at **2:00 AM** daily.
+*   **Pipeline**:
+    1.  **Crawl Phase**: Runs crawlers for all defined stores in parallel (matrix strategy). It caches raw HTML data to speed up future runs and recover from failures.
+    2.  **Parse Phase**: downloads raw data and parses it into JSON.
+    3.  **Collect Phase**: Aggregates all `*.result.json` files.
+    4.  **Deploy Phase**: Builds the React application with the new data and deploys it to **GitHub Pages**.
+
+### Adding a New Data Source
+
+When adding a new retailer (e.g., Penny), you **MUST** update the deployment workflow:
+
+1.  Open `.github/workflows/deploy.yml`.
+2.  Add the new store identifier to the `matrix.store` list in **BOTH** the `crawl` and `parse` jobs.
+3.  Add configuration to the `matrix.include` section for:
+    *   **Crawl Args**: Define worker count and flags (e.g., `--headless`).
+    *   **Parse Args**: Define worker count.
+
+```yaml
+# Example addition to matrix
+- store: penny
+  crawl_args: --headless --workers 4
+```
+
+Failure to do this will result in the new store being ignored by the daily automation.
+
+
 ## Documentation Maintenance
 
 **Note**: This `README.md` and the `sources/schema.json` are maintained by the AI assistant.
 
 *   **When to update**: If you add a new data source, change the crawler architecture, modify the output schema, or change how the browser app consumes data.
 *   **How to update**: Explicitly ask the assistant to "update the project README" after making your code changes.
-

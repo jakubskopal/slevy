@@ -1,24 +1,31 @@
-export const FOOD_CATEGORIES = new Set([
-    // Fresh
-    "Ovoce a zelenina", "OVOCE A ZELENINA",
-    "Maso, uzeniny a ryby", "MASO A RYBY", "Maso a lahůdky",
-    "Mléčné výrobky a vejce", "MLÉČNÉ A CHLAZENÉ", "Mléčné, vejce a margaríny",
-    "Pečivo", "PEKÁRNA A CUKRÁRNA", "Pekárna", "PEČIVO",
+export const FOOD_KEYWORDS = [
+    "potraviny",
+    "ovoce", "zelenina", "bylinky", "houby",
+    "maso", "ryby", "drůbež", "uzeniny", "šunka", "salám", "klobás", "párky", "paštiky",
+    "mléč", "sýr", "jogurt", "tvaroh", "máslo", "tuky", "vejce", "smetan",
+    "pečivo", "pekárn", "chléb", "chleb", "rohlík", "koláč", "bábovk", "baget",
+    "trvanlivé", "konzerv", "zavař", "džem", "med", "sirup",
+    "vaření", "pečení", "těstoviny", "rýže", "luštěniny", "mouka", "cukr", "sůl", "olej", "ocet", "koření",
+    "lahůdky", "pomazán", "salát",
+    "mražené", "zmrzlin", "hotová jídla", "polotovary", "pizza",
+    "zdravá výživa", "speciální výživa", "cereálie", "müsli", "kaše"
+]
 
-    // Pantry / Cooking
-    "Trvanlivé", "TRVANLIVÉ",
-    "Konzervy",
-    "Vaření a pečení",
-    "Zdravá výživa", "Speciální výživa",
-
-    // Snacks / Ready Meals
-    "Lahůdky", "UZENINY A LAHŮDKY",
-    "Sladkosti a slané snacky",
-
-    // Frozen
-    "Mražené a instantní potraviny", "MRAŽENÉ POTRAVINY", "Mražené"
-])
+export const NON_FOOD_KEYWORDS = [
+    "krmivo", "zvířata", "psi", "kočky", "pes", "kočka", "mazlíčci",
+    "drogerie", "kosmetika", "hygiena", "domácnost", "úklid", "papír", "tablety", "ubrousky",
+    "sladkosti", "cukrovinky", "bonbony", "čokoláda", "oplatky", "sušenky",
+    "protein", "čajové", "sladké"
+]
 
 export const isFoodCategory = (category: string) => {
-    return FOOD_CATEGORIES.has(category)
+    const lower = category.toLowerCase()
+
+    // Check exclusion first
+    if (NON_FOOD_KEYWORDS.some(kw => lower.includes(kw))) {
+        return false
+    }
+
+    // Check inclusion
+    return FOOD_KEYWORDS.some(kw => lower.includes(kw))
 }

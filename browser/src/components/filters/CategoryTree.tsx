@@ -58,7 +58,7 @@ const CategoryNode = ({ node, filters, toggleFilter, hasSelectedParent = false }
     )
 }
 
-import { FOOD_CATEGORIES } from '../../utils/categories'
+import { isFoodCategory } from '../../utils/categories'
 
 // ... existing code ...
 
@@ -96,7 +96,7 @@ export const CategoryTree = ({ products, filters, toggleFilter, setFilterSet, on
         const other: CategoryNodeDef[] = []
 
         Object.values(tree).forEach(node => {
-            if (FOOD_CATEGORIES.has(node.name)) {
+            if (isFoodCategory(node.name)) {
                 food.push(node)
             } else {
                 other.push(node)
