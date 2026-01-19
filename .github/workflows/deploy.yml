@@ -191,6 +191,7 @@ jobs:
           path: |
             data/*.processed.json
             data/*.result.json
+            data/nutrition.analysis.md
 
   build-deploy:
     needs: collect

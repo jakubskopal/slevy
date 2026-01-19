@@ -59,6 +59,13 @@
                     },
                     "description": "Hierarchical list of categories belonging to the product"
                 },
+                "ai_cats": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "AI-derived categories (e.g. 'Protein > Legumes')"
+                },
                 "category_ids": {
                     "type": "array",
                     "items": {

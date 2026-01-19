@@ -27,3 +27,7 @@ browser/dist/
 browser/dist-ssr/
 browser/*.local
 browser/public/kupi.json
+
+# Temporary/test files
+vibes/*
+!vibes/.keep

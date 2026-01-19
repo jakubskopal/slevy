@@ -12,110 +12,67 @@ Outputs a comprehensive markdown report.
 
 import json
 import glob
-import re
+import datetime
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
 from dataclasses import dataclass
-
 
 @dataclass
 class NutritionScore:
     """Score for a product based on nutritional value per price"""
     product_name: str
     brand: Optional[str]
-    category: str
     store: str
+    source: str
     price: float
     unit_price: float
     unit: str
     package_size: str
-    product_url: Optional[str]
-    value_score: float  # Lower is better (price per nutrition benefit)
-    notes: str
-
+    ai_cats: List[str]
+    category_path: str
+    value_score: float  # Lower is better (price per unit)
+    product_url: Optional[str] = None
+    
+    # helper for density calculation
+    nutrient_gram_per_100g: float = 0.0
+    price_per_100g_nutrient: float = 0.0
 
 class NutritionAnalyzer:
-    """Analyzes grocery data for nutritional value"""
+    """Analyzes grocery data for nutritional value using AI categories"""
 
-    # Keywords for identifying protein sources (meat, fish, dairy, legumes, eggs)
-    PROTEIN_KEYWORDS = {
-        'high': [
-            r'\bkuřec', r'\bcurry', r'\bkuře', r'\bslepic', r'\bdrůbež',  # Chicken
-            r'\bvepř', r'\bpork', r'\bklobás', r'\bsal[aá]m', r'\bšunk',  # Pork
-            r'\bhovězí', r'\bbeef', r'\bsteak',  # Beef
-            r'\brybí', r'\btuňák', r'\blosos', r'\bmakrela', r'\bsardink', r'\bfish',  # Fish
-            r'\bvajíč', r'\bejce', r'\begg',  # Eggs
-            r'\btvaroh', r'\bquark', r'\bcottage',  # Cottage cheese
-            r'\bprotein', r'\bproteín',  # Protein products
-            r'\bčočk', r'\blentil', r'\bfazol', r'\bbean', r'\bcizrn', r'\bchickpea',  # Legumes
-            r'\bkrevet', r'\bshrimp', r'\bkrab',  # Seafood
-            r'\btofu', r'\btempeh', r'\bseitan',  # Plant protein
-        ],
-        'medium': [
-            r'\bmléko', r'\bmilk', r'\bsýr', r'\bcheese',  # Dairy
-            r'\bjogurt', r'\byogu?rt',  # Yogurt
-            r'\bmozzarella', r'\bgouda', r'\bedam', r'\bchedar', r'\bparmezan',  # Cheese types
-            r'\bořech', r'\bnut', r'\bmandl', r'\balmond',  # Nuts
-        ],
-        'exclude': [
-            r'\bpečivo', r'\bchléb', r'\bsušenk', r'\bcookie', r'\bbiscuit',  # Bakery
-            r'\bčokolád', r'\bchocolate', r'\bcukr', r'\bsugar',  # Sweets
-            r'\bomáčk', r'\bsauce', r'\bpolévk', r'\bsoup',  # Prepared
-            r'\bnápoj', r'\bdrink', r'\bdžus', r'\bjuice',  # Drinks
-            r'\bkečup', r'\bmayonnaise', r'\bhořčic',  # Condiments
-        ]
+    # Approximate nutrient content per 100g for estimations
+    NUTRIENT_ESTIMATES = {
+        # Protein (g per 100g)
+        'Protein > Legumes': 22.0,
+        'Protein > Eggs': 13.0, # ~6-7g per 50g egg
+        'Protein > Egg Products': 10.0, # Spreads, salads
+        'Protein > Cottage Cheese': 12.0,
+        'Protein > Chicken': 23.0,
+        'Protein > Meat': 20.0,
+        'Protein > Meat Products': 16.0, # Ham, sausages (lower protein, higher fat/water)
+        'Protein > Fish': 20.0,
+        'Protein > Dairy': 3.4, # Milk average
+        'Protein > Plant Based': 15.0,
+        
+        # Carbs (g per 100g)
+        'Carbs > Rice': 80.0,
+        'Carbs > Pasta': 71.0,
+        'Carbs > Flour': 76.0,
+        'Carbs > Potatoes': 17.0,
+        'Carbs > Bread': 49.0,
+        'Carbs > Oats & Cereals': 66.0,
+        'Carbs > Grains': 70.0,
+        
+        # Fats (g per 100g)
+        'Fats > Oil': 100.0,
+        'Fats > Butter & Margarine': 81.0,
+        'Fats > Nuts': 50.0,
+        'Fats > Seeds': 40.0,
+        'Fats > Avocado': 15.0,
+        'Fats > Fatty Fish': 14.0
     }
 
-    # Keywords for identifying carbohydrate sources (grains, pasta, rice, potatoes, bread)
-    CARB_KEYWORDS = {
-        'high': [
-            r'\brýže', r'\brice', r'\brizoto', r'\brisotto',  # Rice
-            r'\btěstovin', r'\bpasta', r'\bšpaget', r'\bspaghetti', r'\bpenne', r'\bmakaron',  # Pasta
-            r'\bbrambor', r'\bpotato', r'\bhranolk', r'\bfries',  # Potatoes
-            r'\bchléb', r'\bbread', r'\brohlík', r'\bbageta', r'\bbaguette',  # Bread
-            r'\bováz', r'\boat', r'\bmüsli', r'\bmuesli', r'\bcornflakes',  # Cereals
-            r'\bkrupic', r'\bkaš', r'\bporridge',  # Porridge
-            r'\bmouka', r'\bflour',  # Flour
-            r'\bkusku', r'\bcouscous', r'\bbulg', r'\bquinoa',  # Grains
-        ],
-        'medium': [
-            r'\bpečivo', r'\bbakery', r'\bsušenk', r'\bcookie',  # Bakery
-            r'\bkruasan', r'\bcroissant', r'\bmuffin',  # Pastries
-        ],
-        'exclude': [
-            r'\bprotein', r'\bproteín',  # Protein products
-            r'\bmaso', r'\bmeat', r'\bryb', r'\bfish',  # Meat
-            r'\bnápoj', r'\bdrink', r'\bdžus', r'\bjuice',  # Drinks
-            r'\bomáčk', r'\bsauce',  # Sauces
-        ]
-    }
-
-    # Keywords for identifying fat sources (oils, butter, nuts, fatty fish, avocado)
-    FAT_KEYWORDS = {
-        'high': [
-            r'\bolej', r'\boil', r'\bslunečnic', r'\bsunflower', r'\bolivov', r'\bolive',  # Oils
-            r'\bmáslo', r'\bbutter', r'\bmargarín', r'\bmargarine',  # Butter
-            r'\bořech', r'\bnut', r'\bmandl', r'\balmond', r'\bkešu', r'\bcashew',  # Nuts
-            r'\blosos', r'\bsalmon', r'\bmakrela', r'\bmackerel', r'\bsardink', r'\bsardin',  # Fatty fish
-            r'\bavokád', r'\bavocado',  # Avocado
-            r'\bsemínk', r'\bseed', r'\bčía', r'\bchia', r'\blněn', r'\bflax',  # Seeds
-            r'\bsádlo', r'\blard', r'\bškvark',  # Animal fat
-            r'\bkokos', r'\bcoconut',  # Coconut products
-        ],
-        'medium': [
-            r'\bsýr', r'\bcheese',  # Cheese
-            r'\bsmetana', r'\bcream', r'\bcrème',  # Cream
-            r'\bmajone', r'\bmayo',  # Mayonnaise
-        ],
-        'exclude': [
-            r'\bpečivo', r'\bbread', r'\bchléb',  # Bread
-            r'\bpolévk', r'\bsoup',  # Soups
-            r'\bnápoj', r'\bdrink', r'\bdžus', r'\bjuice',  # Drinks
-            r'\bmléko\s+0', r'\bskim', r'\blight',  # Low-fat
-        ]
-    }
-
-    def __init__(self, data_dir: str = '/home/jakubs/Work/Me/agrty/data'):
+    def __init__(self, data_dir: str = 'data'):
         self.data_dir = data_dir
         self.all_products = []
 
@@ -123,342 +80,251 @@ class NutritionAnalyzer:
         """Load all processed JSON files"""
         pattern = f'{self.data_dir}/*.processed.json'
         files = glob.glob(pattern)
-
         print(f"Found {len(files)} processed data files")
+        import os
 
         for file_path in files:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                self.all_products.extend(data['products'])
+            try:
+                # Extract source from filename (e.g. data/kupi.processed.json -> kupi)
+                source_name = os.path.basename(file_path).split('.')[0]
+                
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    products = data.get('products', [])
+                    # Inject source
+                    for p in products:
+                        p['source_file_key'] = source_name
+                    
+                    self.all_products.extend(products)
+            except Exception as e:
+                print(f"Error loading {file_path}: {e}")
 
         print(f"Loaded {len(self.all_products)} total products")
 
-    def matches_keywords(self, text: str, keywords: Dict[str, List[str]]) -> Tuple[bool, str]:
-        """Check if text matches keyword criteria"""
-        if not text:
-            return False, ''
-
-        text_lower = text.lower()
-
-        # Check exclusions first
-        for pattern in keywords.get('exclude', []):
-            if re.search(pattern, text_lower):
-                return False, 'excluded'
-
-        # Check high priority matches
-        for pattern in keywords.get('high', []):
-            if re.search(pattern, text_lower):
-                return True, 'high'
-
-        # Check medium priority matches
-        for pattern in keywords.get('medium', []):
-            if re.search(pattern, text_lower):
-                return True, 'medium'
-
-        return False, ''
-
-    def analyze_protein_sources(self) -> List[NutritionScore]:
-        """Find best protein sources by price"""
-        protein_products = []
+    def get_products_by_category(self, target_cat: str) -> List[NutritionScore]:
+        """Find products belonging to a specific AI category"""
+        matches = []
+        
+        nutrient_density = self.NUTRIENT_ESTIMATES.get(target_cat, 0.0)
 
         for product in self.all_products:
-            # Check product name and categories
-            match_name, priority_name = self.matches_keywords(product['name'], self.PROTEIN_KEYWORDS)
-            match_cat, priority_cat = self.matches_keywords(
-                ' '.join(product.get('categories', [])),
-                self.PROTEIN_KEYWORDS
-            )
+            ai_cats = product.get('ai_cats', [])
+            if target_cat in ai_cats:
+                
+                for price_offer in product.get('prices', []):
+                    # Normalized price check
+                    p = price_offer.get('price')
+                    up = price_offer.get('unit_price')
+                    
+                    if not up: continue
+                    if not p: continue # Skip if price is truly 0 even after norm (unlikely)
 
-            if not (match_name or match_cat):
-                continue
+                    unit = price_offer.get('unit', '').lower()
+                    
+                    # Normalize unit price to per kg/l for comparison
+                    norm_unit_price = up
+                    if unit in ['g', 'ml']:
+                        norm_unit_price = up * 1000
+                    
+                    # Calculate price per 100g nutrient
+                    cost_per_nutrient = 0.0
+                    if nutrient_density > 0:
+                        # norm_unit_price is price per kg (1000g)
+                        # price per 1g product = norm_unit_price / 1000
+                        # price per 100g product = norm_unit_price / 10
+                        # nutrient in 100g product = nutrient_density
+                        # cost per 1g nutrient = (price per 100g product) / nutrient_density
+                        # cost per 100g nutrient = cost per 1g nutrient * 100
+                        
+                        price_per_100g_product = norm_unit_price / 10
+                        cost_per_nutrient = (price_per_100g_product / nutrient_density) * 100
 
-            priority = priority_name if match_name else priority_cat
+                    matches.append(NutritionScore(
+                        product_name=product['name'],
+                        brand=product.get('brand'),
+                        store=price_offer['store_name'],
+                        source=product.get('source_file_key', 'unknown'),
+                        price=p,
+                        unit_price=norm_unit_price,
+                        unit='kg' if unit in ['g', 'kg'] else 'l' if unit in ['ml', 'l', 'liter'] else unit,
+                        package_size=price_offer.get('package_size', ''),
+                        ai_cats=ai_cats,
+                        category_path=' > '.join(product.get('categories', [])),
+                        value_score=norm_unit_price,
+                        product_url=product.get('product_url'),
+                        nutrient_gram_per_100g=nutrient_density,
+                        price_per_100g_nutrient=cost_per_nutrient
+                    ))
+        print(f"DEBUG: Found {len(matches)} matches for {target_cat}. First URL: {matches[0].product_url if matches else 'None'}")
+        
+        # Sort by unit price (value)
+        matches.sort(key=lambda x: x.value_score)
+        return matches
 
-            # Analyze each price offer
-            for price_offer in product.get('prices', []):
-                if not price_offer.get('unit_price') or not price_offer.get('price'):
-                    continue
-
-                # For protein, we prefer by kg/l pricing
-                unit_price = price_offer['unit_price']
-                unit = price_offer.get('unit', '')
-
-                # Bonus for high-priority protein sources
-                priority_multiplier = 0.7 if priority == 'high' else 1.0
-                value_score = unit_price * priority_multiplier
-
-                category = ' > '.join(product.get('categories', ['Unknown']))
-
-                protein_products.append(NutritionScore(
-                    product_name=product['name'],
-                    brand=product.get('brand'),
-                    category=category,
-                    store=price_offer['store_name'],
-                    price=price_offer['price'],
-                    unit_price=unit_price,
-                    unit=unit,
-                    package_size=price_offer.get('package_size', ''),
-                    product_url=product.get('product_url'),
-                    value_score=value_score,
-                    notes=f'Priority: {priority}'
-                ))
-
-        # Sort by value score (lower is better)
-        protein_products.sort(key=lambda x: x.value_score)
-        return protein_products
-
-    def analyze_carb_sources(self) -> List[NutritionScore]:
-        """Find best carbohydrate sources by price"""
-        carb_products = []
-
-        for product in self.all_products:
-            match_name, priority_name = self.matches_keywords(product['name'], self.CARB_KEYWORDS)
-            match_cat, priority_cat = self.matches_keywords(
-                ' '.join(product.get('categories', [])),
-                self.CARB_KEYWORDS
-            )
-
-            if not (match_name or match_cat):
-                continue
-
-            priority = priority_name if match_name else priority_cat
-
-            for price_offer in product.get('prices', []):
-                if not price_offer.get('unit_price') or not price_offer.get('price'):
-                    continue
-
-                unit_price = price_offer['unit_price']
-                unit = price_offer.get('unit', '')
-
-                # Bonus for high-priority carb sources (grains, pasta, rice)
-                priority_multiplier = 0.7 if priority == 'high' else 1.0
-                value_score = unit_price * priority_multiplier
-
-                category = ' > '.join(product.get('categories', ['Unknown']))
-
-                carb_products.append(NutritionScore(
-                    product_name=product['name'],
-                    brand=product.get('brand'),
-                    category=category,
-                    store=price_offer['store_name'],
-                    price=price_offer['price'],
-                    unit_price=unit_price,
-                    unit=unit,
-                    package_size=price_offer.get('package_size', ''),
-                    product_url=product.get('product_url'),
-                    value_score=value_score,
-                    notes=f'Priority: {priority}'
-                ))
-
-        carb_products.sort(key=lambda x: x.value_score)
-        return carb_products
-
-    def analyze_fat_sources(self) -> List[NutritionScore]:
-        """Find best fat sources by price"""
-        fat_products = []
-
-        for product in self.all_products:
-            match_name, priority_name = self.matches_keywords(product['name'], self.FAT_KEYWORDS)
-            match_cat, priority_cat = self.matches_keywords(
-                ' '.join(product.get('categories', [])),
-                self.FAT_KEYWORDS
-            )
-
-            if not (match_name or match_cat):
-                continue
-
-            priority = priority_name if match_name else priority_cat
-
-            for price_offer in product.get('prices', []):
-                if not price_offer.get('unit_price') or not price_offer.get('price'):
-                    continue
-
-                unit_price = price_offer['unit_price']
-                unit = price_offer.get('unit', '')
-
-                # Bonus for high-priority fat sources (oils, nuts)
-                priority_multiplier = 0.7 if priority == 'high' else 1.0
-                value_score = unit_price * priority_multiplier
-
-                category = ' > '.join(product.get('categories', ['Unknown']))
-
-                fat_products.append(NutritionScore(
-                    product_name=product['name'],
-                    brand=product.get('brand'),
-                    category=category,
-                    store=price_offer['store_name'],
-                    price=price_offer['price'],
-                    unit_price=unit_price,
-                    unit=unit,
-                    package_size=price_offer.get('package_size', ''),
-                    product_url=product.get('product_url'),
-                    value_score=value_score,
-                    notes=f'Priority: {priority}'
-                ))
-
-        fat_products.sort(key=lambda x: x.value_score)
-        return fat_products
-
-    def generate_markdown_report(self, output_file: str = '/home/jakubs/Work/Me/agrty/data/nutrition.analysis.md'):
-        """Generate comprehensive markdown report"""
-
-        protein_sources = self.analyze_protein_sources()
-        carb_sources = self.analyze_carb_sources()
-        fat_sources = self.analyze_fat_sources()
-
-        # Generate report
+    def generate_markdown_report(self, output_file: str = 'data/nutrition.analysis.md'):
+        """
+        Generates the markdown report with embedded product links.
+        
+        Nuts and Bolts:
+        - Uses 'product://<store>|<url>' schema for links.
+        - Both store and URL are URL-encoded.
+        - React app intercepts these links to open the Product Detail Overlay.
+        - Requires 'urllib.parse.quote' for encoding.
+        """
+        import urllib.parse
+        
         report = []
+        print("DEBUG: Starting report generation")
+        
+        date_str = datetime.date.today().isoformat()
+        
         report.append("# Nutritional Value Analysis")
         report.append("")
         report.append("Analysis of grocery offers to identify cheap and high-quality sources of macronutrients.")
         report.append("")
-        report.append(f"**Analysis Date:** 2026-01-18")
+        report.append(f"**Analysis Date:** {date_str}")
         report.append(f"**Total Products Analyzed:** {len(self.all_products)}")
-        report.append("")
-        report.append("---")
-        report.append("")
-
-        # Protein Section
-        report.append("## Best Protein Sources")
-        report.append("")
-        report.append(f"Found **{len(protein_sources)}** protein-rich products.")
-        report.append("")
-        report.append("### Top 30 by Value (Price per Unit)")
-        report.append("")
-        report.append("| Rank | Product | Brand | Store | Price | Unit Price | Package | Category | Notes |")
-        report.append("|------|---------|-------|-------|-------|------------|---------|----------|-------|")
-
-        for i, item in enumerate(protein_sources[:30], 1):
-            brand = item.brand or 'N/A'
-            report.append(
-                f"| {i} | {item.product_name[:50]} | {brand[:20]} | {item.store} | "
-                f"{item.price:.2f} Kč | {item.unit_price:.2f} Kč/{item.unit} | "
-                f"{item.package_size} | {item.category[:40]} | {item.notes} |"
-            )
+        
+        # Determine analyzed stores
+        stores = set()
+        for p in self.all_products:
+             for pr in p.get('prices', []):
+                 if pr.get('store_name'): stores.add(pr['store_name'])
+        
+        report.append(f"**Stores Analyzed:** {', '.join(sorted(list(stores)))}")
+        print(f"DEBUG: Stores analyzed: {len(stores)}")
 
         report.append("")
         report.append("---")
         report.append("")
 
-        # Carbohydrates Section
-        report.append("## Best Carbohydrate Sources")
+        # Executive Summary (Placeholder - difficult to generate dynamic text without LLM, using template)
+        report.append("## Executive Summary")
         report.append("")
-        report.append(f"Found **{len(carb_sources)}** carbohydrate-rich products.")
+        report.append("This analysis identifies valid sources of macronutrients based on current price data.")
         report.append("")
-        report.append("### Top 30 by Value (Price per Unit)")
-        report.append("")
-        report.append("| Rank | Product | Brand | Store | Price | Unit Price | Package | Category | Notes |")
-        report.append("|------|---------|-------|-------|-------|------------|---------|----------|-------|")
+        
+        # Define categories to analyze
+        protein_cats = [k for k in self.NUTRIENT_ESTIMATES.keys() if k.startswith('Protein')]
+        carb_cats = [k for k in self.NUTRIENT_ESTIMATES.keys() if k.startswith('Carbs')]
+        fat_cats = [k for k in self.NUTRIENT_ESTIMATES.keys() if k.startswith('Fats')]
+        
+        print(f"DEBUG: Categories defined. Protein: {len(protein_cats)}, Carb: {len(carb_cats)}, Fat: {len(fat_cats)}")
 
-        for i, item in enumerate(carb_sources[:30], 1):
-            brand = item.brand or 'N/A'
-            report.append(
-                f"| {i} | {item.product_name[:50]} | {brand[:20]} | {item.store} | "
-                f"{item.price:.2f} Kč | {item.unit_price:.2f} Kč/{item.unit} | "
-                f"{item.package_size} | {item.category[:40]} | {item.notes} |"
-            )
+        # Helper to render category section
+        def render_section(title, categories, metric_name="Unit Price"):
+            print(f"DEBUG: Rendering section {title}")
+            report.append(f"## {title}")
+            report.append("")
+            
+            top_global = []
 
+            for cat in categories:
+                friendly_name = cat.split(' > ')[1]
+                products = self.get_products_by_category(cat)
+                
+                if not products:
+                    continue
+                
+                avg_price = sum(p.value_score for p in products) / len(products) if products else 0
+                best_price = products[0].value_score if products else 0
+                
+                report.append(f"### {friendly_name}")
+                report.append(f"**Estimated Density:** ~{self.NUTRIENT_ESTIMATES[cat]}g per 100g")
+                report.append(f"**Average Price:** {avg_price:.2f} Kč/unit")
+                report.append("")
+                report.append("**Best Deals:**")
+                report.append("| Product | Store | Price | Unit Price | Cost per 100g Nutrient |")
+                report.append("|---------|-------|-------|------------|------------------------|")
+                
+                for p in products[:5]:
+                    # Create Smart Link: product://<store>|<url>
+                    # Ensure p.product_url is treated as string even if None
+                    p_url = getattr(p, 'product_url', '') or ''
+                    
+                    # Ensure store is safe
+                    # store_val = p.store if p.store else 'Unknown'
+                    
+                    # Use source for link
+                    source_key = getattr(p, 'source', 'unknown')
+                    
+                    encoded_source = urllib.parse.quote(source_key)
+                    encoded_url = urllib.parse.quote(p_url)
+                    
+                    link = f"product://{encoded_source}::{encoded_url}"
+                    
+                    # Truncate slightly longer for better readability if space allows
+                    clean_name = p.product_name[:45]
+                    product_link = f"[{clean_name}]({link})"
+                    
+                    report.append(f"| {product_link} | {p.store} | {p.price:.2f} | {p.unit_price:.2f}/{p.unit} | **{p.price_per_100g_nutrient:.2f} Kč** |")
+                    top_global.append(p)
+                
+                report.append("")
+            
+            return top_global
+
+        protein_top = render_section("Best Protein Sources", protein_cats)
+        report.append("---")
+        carb_top = render_section("Best Carbohydrate Sources", carb_cats)
+        report.append("---")
+        fat_top = render_section("Best Fat Sources", fat_cats)
+        report.append("---")
+
+        # Cost Analysis Summary
+        report.append("## Cost Analysis Summary")
         report.append("")
+        report.append("### Price Comparison by Nutrient Density")
+        report.append("")
+        
+        def render_density_table(items, title):
+             report.append(f"**{title} (Lowest Cost per 100g Nutrient):**")
+             # Sort by cost per nutrient
+             items_sorted = sorted(items, key=lambda x: x.price_per_100g_nutrient)
+             
+             # Deduplicate by name/store to show variety
+             seen = set()
+             unique_items = []
+             for i in items_sorted:
+                  key = f"{i.product_name}-{i.store}"
+                  if key not in seen:
+                       unique_items.append(i)
+                       seen.add(key)
+             
+             for i, p in enumerate(unique_items[:10], 1):
+                  cat = p.ai_cats[-1] if p.ai_cats else "Unknown"
+                  
+                  # Generate link here too
+                  p_url = getattr(p, 'product_url', '') or ''
+                  
+                  # Use source, not store, for the link protocol so App switches context correctly
+                  source_key = getattr(p, 'source', 'unknown')
+                  
+                  encoded_source = urllib.parse.quote(source_key)
+                  encoded_url = urllib.parse.quote(p_url)
+                  link = f"product://{encoded_source}::{encoded_url}"
+                  product_link = f"[{p.product_name}]({link})"
+                  
+                  report.append(f"{i}. {product_link} ({p.store}) [{cat}]: **{p.price_per_100g_nutrient:.2f} Kč**")
+             report.append("")
+
+        render_density_table(protein_top, "Protein")
+        render_density_table(carb_top, "Carbohydrates")
+        render_density_table(fat_top, "Fats")
+        
         report.append("---")
         report.append("")
+        report.append("**Report Generated by:** Automated Nutrition Analyzer")
+        report.append(f"**Generated At:** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-        # Fats Section
-        report.append("## Best Fat Sources")
-        report.append("")
-        report.append(f"Found **{len(fat_sources)}** fat-rich products.")
-        report.append("")
-        report.append("### Top 30 by Value (Price per Unit)")
-        report.append("")
-        report.append("| Rank | Product | Brand | Store | Price | Unit Price | Package | Category | Notes |")
-        report.append("|------|---------|-------|-------|-------|------------|---------|----------|-------|")
-
-        for i, item in enumerate(fat_sources[:30], 1):
-            brand = item.brand or 'N/A'
-            report.append(
-                f"| {i} | {item.product_name[:50]} | {brand[:20]} | {item.store} | "
-                f"{item.price:.2f} Kč | {item.unit_price:.2f} Kč/{item.unit} | "
-                f"{item.package_size} | {item.category[:40]} | {item.notes} |"
-            )
-
-        report.append("")
-        report.append("---")
-        report.append("")
-
-        # Summary Statistics
-        report.append("## Summary Statistics")
-        report.append("")
-
-        # Store distribution for protein
-        protein_by_store = defaultdict(int)
-        for item in protein_sources[:30]:
-            protein_by_store[item.store] += 1
-
-        report.append("### Top Protein Deals by Store")
-        for store, count in sorted(protein_by_store.items(), key=lambda x: x[1], reverse=True):
-            report.append(f"- **{store}**: {count} products in top 30")
-        report.append("")
-
-        # Store distribution for carbs
-        carb_by_store = defaultdict(int)
-        for item in carb_sources[:30]:
-            carb_by_store[item.store] += 1
-
-        report.append("### Top Carb Deals by Store")
-        for store, count in sorted(carb_by_store.items(), key=lambda x: x[1], reverse=True):
-            report.append(f"- **{store}**: {count} products in top 30")
-        report.append("")
-
-        # Store distribution for fats
-        fat_by_store = defaultdict(int)
-        for item in fat_sources[:30]:
-            fat_by_store[item.store] += 1
-
-        report.append("### Top Fat Deals by Store")
-        for store, count in sorted(fat_by_store.items(), key=lambda x: x[1], reverse=True):
-            report.append(f"- **{store}**: {count} products in top 30")
-        report.append("")
-
-        report.append("---")
-        report.append("")
-
-        # Methodology
-        report.append("## Methodology")
-        report.append("")
-        report.append("### Selection Criteria")
-        report.append("")
-        report.append("Products were selected based on:")
-        report.append("1. **Keyword matching** - Product names and categories matched against nutrition-specific keywords")
-        report.append("2. **Priority scoring** - High-priority items (e.g., chicken, rice, oils) receive 30% bonus")
-        report.append("3. **Unit price** - All items ranked by price per kilogram or liter")
-        report.append("4. **Exclusions** - Products like drinks, condiments, and sweets are filtered out")
-        report.append("")
-        report.append("### Priority Categories")
-        report.append("")
-        report.append("**High Priority Proteins:**")
-        report.append("- Chicken, fish, eggs, cottage cheese, legumes")
-        report.append("")
-        report.append("**High Priority Carbohydrates:**")
-        report.append("- Rice, pasta, potatoes, bread, oats, flour")
-        report.append("")
-        report.append("**High Priority Fats:**")
-        report.append("- Cooking oils, butter, nuts, fatty fish, avocado")
-        report.append("")
-
-        # Write report
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write('\n'.join(report))
-
-        print(f"\nReport generated: {output_file}")
-        print(f"- Protein sources: {len(protein_sources)}")
-        print(f"- Carb sources: {len(carb_sources)}")
-        print(f"- Fat sources: {len(fat_sources)}")
-
+        print(f"Report generated: {output_file}")
 
 def main():
     analyzer = NutritionAnalyzer()
     analyzer.load_data()
     analyzer.generate_markdown_report()
-
 
 if __name__ == '__main__':
     main()

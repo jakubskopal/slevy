@@ -11,7 +11,7 @@ CURRENT_INPUT_SUFFIX="result"
 STEP_COUNTER=1
 
 if [ "$1" == "--default" ]; then
-    set -- filter_for_food enrich_brands build_categories
+    set -- filter_for_food enrich_brands normalize_data assign_ai_categories build_categories
 fi
 
 if [ "$#" -eq 0 ]; then
@@ -54,5 +54,11 @@ for f in ${DATA_DIR}/*.${CURRENT_INPUT_SUFFIX}.json; do
         cp "$f" "$TARGET_FILE"
     fi
 done
+
+echo "---------------------------------------------------"
+echo "Running Step ${STEP_COUNTER}: analyze_nutrition"
+echo "Generating nutrition.analysis.md"
+
+python3 processing/analyze_nutrition.py
 
 echo "Done."

@@ -1,76 +1,55 @@
-import React from 'react'
-import { FilterState, Source, CategoryNode } from '../../types'
+import { SourceSelector } from '../filters/SourceSelector'
 import { FilterGroup } from '../filters/FilterGroup'
 import { CategoryTree } from '../filters/CategoryTree'
-import { SourceSelector } from '../filters/SourceSelector'
+import { useData } from '../../context/DataContext'
+import { useFilters } from '../../context/FilterContext'
 
-interface SidebarProps {
-    sources: Source[]
-    currentSource: Source | null
-    onSourceChange: (name: string) => void
-    filters: FilterState
-    toggleFilter: (type: keyof FilterState, value: string) => void
-    resetFilters: () => void
-    clearSection: (type: keyof FilterState) => void
-    brands: Record<string, number>
-    stores: Record<string, number>
-    categories: CategoryNode[]
-    onTitleClick: (id: string) => void
-}
+export const Sidebar = () => {
+    const { sources, currentSource, brandsMap, storesMap, currentData } = useData()
+    const { filters, setSource, toggleFilter, toggleCategory, resetFilters, clearSection } = useFilters()
 
-export const Sidebar = ({
-    sources,
-    currentSource,
-    onSourceChange,
-    filters,
-    toggleFilter,
-    resetFilters,
-    clearSection,
-    brands,
-    stores,
-    categories,
-    onTitleClick
-}: SidebarProps) => {
+    const categories = currentData?.metadata.categories || []
+
     return (
-        <aside>
+        <aside className="sidebar">
             <SourceSelector
                 sources={sources}
                 currentSource={currentSource}
-                onSourceChange={onSourceChange}
+                onSourceChange={setSource}
             />
 
-            <div className="sidebar-header">
-                <h2>Filters</h2>
-                <button className="reset-button" onClick={resetFilters}>Clear All</button>
-            </div>
+            {/* Stores */}
+            <FilterGroup
+                title="Stores"
+                items={storesMap}
+                type="stores"
+                filters={filters}
+                toggleFilter={toggleFilter}
+                onClear={() => clearSection('stores')}
+            />
 
-            {Object.keys(stores).length > 1 && (
-                <FilterGroup
-                    title="Stores"
-                    items={stores}
-                    type="stores"
-                    filters={filters}
-                    toggleFilter={toggleFilter}
-                    onClear={() => clearSection('stores')}
-                />
-            )}
-
+            {/* Categories */}
             <CategoryTree
                 categories={categories}
                 filters={filters}
                 toggleFilter={toggleFilter}
-                onTitleClick={onTitleClick}
+                onTitleClick={(id) => toggleCategory(id, true)}
                 onClear={() => clearSection('categories')}
             />
 
+            {/* Brands */}
             <FilterGroup
                 title="Brands"
-                items={brands}
+                items={brandsMap}
                 type="brands"
                 filters={filters}
                 toggleFilter={toggleFilter}
                 onClear={() => clearSection('brands')}
             />
+
+            <button className="reset-btn" onClick={resetFilters}>
+                Reset All Filters
+            </button>
         </aside>
     )
 }

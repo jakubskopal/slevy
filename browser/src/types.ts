@@ -18,6 +18,8 @@ export interface Product {
     category_ids: string[]
     prices: Price[]
     description?: string | null
+    product_url?: string | null
+    ai_cats?: string[]
 }
 
 export interface Metadata {

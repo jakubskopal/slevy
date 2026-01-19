@@ -202,4 +202,11 @@ Failure to do this will result in the new store being ignored by the daily autom
     *   If you change the crawler architecture.
     *   If you modify the output schema.
     *   **If you add or significantly change a step in the Data Processing Pipeline.**
+*   **If you add or significantly change a step in the Data Processing Pipeline.**
 *   **How to update**: Explicitly ask the assistant to "update the project README" after making your code changes.
+
+## Development Guidelines
+
+### Temporary Files
+All temporary, test, or intermediate scripts and files should be placed in the `vibes/` directory. This keeps the main source tree clean and organized.
+

@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Read `README.md` for detailed project architecture, data schema, crawler strategies, processing pipeline, and deployment workflow.
 
+## Development Guidelines
+- **Temporary Files**: Create all temporary, test, or intermediate files in the `vibes/` directory.
+
+
 ## Quick Reference Commands
 
 ### Python
