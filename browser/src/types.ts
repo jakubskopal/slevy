@@ -8,6 +8,8 @@ export interface Price {
     discount_pct?: number | null
     original_price?: number | null
     validity?: string | null
+    validity_start?: string | null
+    validity_end?: string | null
 }
 
 export interface Product {

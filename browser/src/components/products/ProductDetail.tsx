@@ -2,6 +2,7 @@ import React from 'react'
 import { Product } from '../../types'
 import { PriceList } from './PriceList'
 import { formatPrice } from '../../utils/format'
+import { useEscapeKey } from '../../hooks/useEscapeKey'
 
 interface ProductDetailProps {
     product: Product
@@ -14,6 +15,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product, dataSourc
     const handleContentClick = (e: React.MouseEvent) => {
         e.stopPropagation()
     }
+
+    // Close on Escape key
+    useEscapeKey(onClose)
 
     // Determine brand info
     const brand = product.brand || 'Unknown Brand'

@@ -30,6 +30,7 @@ class NutritionScore:
     package_size: str
     ai_findings: List[str]
     category_path: str
+    category_ids: List[str]
     value_score: float  # Lower is better (price per unit)
     product_url: Optional[str] = None
     
@@ -160,6 +161,7 @@ class NutritionAnalyzer:
                         package_size=price_offer.get('package_size', ''),
                         ai_findings=ai_findings,
                         category_path=' > '.join(product.get('categories', [])),
+                        category_ids=product.get('category_ids', []),
                         value_score=norm_unit_price,
                         product_url=product.get('product_url'),
                         nutrient_gram_per_100g=nutrient_density,
@@ -240,7 +242,18 @@ class NutritionAnalyzer:
                         clean_name = p.product_name[:45]
                         product_link = f"[{clean_name}]({link})"
                         
-                        report.append(f"| {product_link} | {p.store} | {p.price:.2f} | {p.unit_price:.2f}/{p.unit} |")
+                        # Category Link for Store
+                        cat_id = p.category_ids[-1] if p.category_ids else 'all'
+                        cat_path = f"{urllib.parse.quote(p.source)}::{cat_id}"
+                        cat_query = f"?store_name={urllib.parse.quote(p.store)}"
+                        
+                        # Add product_url if available to auto-open
+                        if p.product_url:
+                             cat_query += f"&product_url={urllib.parse.quote(p.product_url)}"
+                        
+                        cat_link = f"category://{cat_path}{cat_query}"
+                        
+                        report.append(f"| {product_link} | [{p.store}]({cat_link}) | {p.price:.2f} | {p.unit_price:.2f}/{p.unit} |")
                         top_global.append(p)
                     report.append("")
 

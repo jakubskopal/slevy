@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Price } from '../../types'
-import { formatPrice } from '../../utils/format'
+import { formatPrice, formatDateRange } from '../../utils/format'
+import { partitionPrices } from '../../utils/prices'
 
 const PriceRow = ({ pr }: { pr: Price }) => (
     <div className="price-item">
@@ -8,7 +9,11 @@ const PriceRow = ({ pr }: { pr: Price }) => (
             <div className="store-info">
                 <span className="store-name">{pr.store_name}</span>
             </div>
-            {pr.validity && <span className="price-validity">{pr.validity}</span>}
+            {(pr.validity || pr.validity_start || pr.validity_end) && (
+                <span className="price-validity">
+                    {formatDateRange(pr.validity_start, pr.validity_end) || pr.validity}
+                </span>
+            )}
         </div>
 
         {pr.condition && <div className="price-condition">{pr.condition}</div>}
@@ -44,43 +49,7 @@ export const PriceList = ({ prices, selectedStores }: { prices: Price[], selecte
     const [expanded, setExpanded] = useState(false)
 
     const { visible, hidden, hiddenRange } = useMemo(() => {
-        // 1. Sort all by unit price ascending
-        const sorted = [...prices].sort((a, b) => {
-            const upA = a.unit_price ?? Infinity
-            const upB = b.unit_price ?? Infinity
-            return upA - upB
-        })
-
-        // 2. If no stores selected, show all
-        if (selectedStores.size === 0) {
-            return { visible: sorted, hidden: [], hiddenRange: null }
-        }
-
-        // 3. Filter
-        const visible: Price[] = []
-        const hidden: Price[] = []
-
-        sorted.forEach(p => {
-            if (selectedStores.has(p.store_name)) {
-                visible.push(p)
-            } else {
-                hidden.push(p)
-            }
-        })
-
-        let hiddenRange: string | null = null
-        if (hidden.length > 0) {
-            const vals = hidden.map(p => p.price).filter((v): v is number => v !== null)
-            if (vals.length > 0) {
-                const min = Math.min(...vals)
-                const max = Math.max(...vals)
-                hiddenRange = min === max ? formatPrice(min) : `${formatPrice(min)} - ${formatPrice(max)}`
-            } else {
-                hiddenRange = "unknown price"
-            }
-        }
-
-        return { visible, hidden, hiddenRange }
+        return partitionPrices(prices, selectedStores)
     }, [prices, selectedStores])
 
     return (

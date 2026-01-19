@@ -1,18 +1,48 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import 'github-markdown-css/github-markdown.css'
 import { Loading } from '../common/Loading'
+import { parseCategoryLink, parseProductLink } from '../../utils/links'
 
 interface AnalysisPageProps {
     onProductLink?: (store: string, url: string) => void
+    onCategoryLink?: (source: string, categoryId: string, storeName?: string, productUrl?: string) => void
+    initialScrollY?: number
+    onSaveScrollY?: (y: number) => void
 }
 
-export function AnalysisPage({ onProductLink }: AnalysisPageProps) {
+export function AnalysisPage({
+    onProductLink,
+    onCategoryLink,
+    initialScrollY = 0,
+    onSaveScrollY
+}: AnalysisPageProps) {
     const [content, setContent] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    // Callback ref to ensure we always use the latest handler on unmount
+    const saveSortRef = useRef(onSaveScrollY)
+    saveSortRef.current = onSaveScrollY
+
+    // Scroll Restoration
+    useEffect(() => {
+        if (!isLoading && initialScrollY > 0) {
+            // Slight delay to ensure layout is stable
+            setTimeout(() => window.scrollTo(0, initialScrollY), 100)
+        }
+    }, [isLoading, initialScrollY])
+
+    // Scroll Saving (On Unmount)
+    useEffect(() => {
+        return () => {
+            if (saveSortRef.current) {
+                saveSortRef.current(window.scrollY)
+            }
+        }
+    }, [])
 
     useEffect(() => {
         // Fetch from root public directory
@@ -35,31 +65,23 @@ export function AnalysisPage({ onProductLink }: AnalysisPageProps) {
     if (isLoading) return <Loading />
     if (error) return <div className="error">{error}</div>
 
-    // Custom Link Renderer to intercept product:// links
+    // Custom Link Renderer to intercept product:// and category:// links
     const components = {
         a: ({ node, ...props }: any) => {
             const href = props.href || ''
-            if (href.startsWith('product://')) {
+
+            const productData = parseProductLink(href)
+            if (productData) {
                 return (
                     <a
                         {...props}
                         href="#"
                         onClick={(e) => {
                             e.preventDefault()
-                            // Format: product://<encoded_store>::<encoded_url>
-                            const path = href.replace('product://', '')
-                            const [encStore, encUrl] = path.split('::')
-
-                            if (encStore && encUrl && onProductLink) {
-                                try {
-                                    const store = decodeURIComponent(encStore)
-                                    const url = decodeURIComponent(encUrl)
-                                    onProductLink(store, url)
-                                } catch (e) {
-                                    console.error("Failed to decode product link", href, e)
-                                }
+                            if (onProductLink) {
+                                onProductLink(productData.store, productData.url)
                             } else {
-                                console.warn("Invalid product link or missing handler", href)
+                                console.warn("Missing handler for product link", href)
                             }
                         }}
                         style={{ color: '#58a6ff', textDecoration: 'none', cursor: 'pointer', fontWeight: 'bold' }}
@@ -68,6 +90,33 @@ export function AnalysisPage({ onProductLink }: AnalysisPageProps) {
                     </a>
                 )
             }
+
+            const categoryData = parseCategoryLink(href)
+            if (categoryData) {
+                return (
+                    <a
+                        {...props}
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            if (onCategoryLink) {
+                                onCategoryLink(
+                                    categoryData.source,
+                                    categoryData.categoryId,
+                                    categoryData.storeName,
+                                    categoryData.productUrl
+                                )
+                            } else {
+                                console.warn("Missing handler for category link", href)
+                            }
+                        }}
+                        style={{ color: '#58a6ff', textDecoration: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
+                        {props.children}
+                    </a>
+                )
+            }
+
             // Fallback for normal links
             return <a {...props} target="_blank" rel="noopener noreferrer" style={{ color: '#58a6ff' }} />
         }
@@ -90,6 +139,7 @@ export function AnalysisPage({ onProductLink }: AnalysisPageProps) {
                         components={components}
                         urlTransform={(uri) => {
                             if (uri.startsWith('product://')) return uri
+                            if (uri.startsWith('category://')) return uri
                             return uri
                         }}
                     >

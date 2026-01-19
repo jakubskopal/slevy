@@ -13,6 +13,7 @@ import { Sidebar } from './components/layout/Sidebar'
 import { ProductCard } from './components/products/ProductCard'
 import { ProductDetail } from './components/products/ProductDetail'
 import { AnalysisPage } from './components/analysis/AnalysisPage'
+import { useDeepLinkHandler } from './hooks/useDeepLinkHandler'
 
 function DataSource({ onProductClick }: { onProductClick: (p: Product) => void }) {
   const { processedProducts, filters } = useFilters()
@@ -37,11 +38,18 @@ function DataSource({ onProductClick }: { onProductClick: (p: Product) => void }
 }
 
 function AppContent() {
-  const { isAnalysis } = useFilters()
+  const { isAnalysis, applyDeepLink } = useFilters()
   const { allData, isLoading, currentData, currentSource } = useData()
 
   // Local UI State (Modal)
   const [selectedProduct, setSelectedProduct] = useState<{ product: Product, sourceName: string } | null>(null)
+
+  // Generic Page Scroll State
+  const [scrollPositions, setScrollPositions] = useState<Record<string, number>>({})
+
+  const handleSaveScroll = (key: string, y: number) => {
+    setScrollPositions(prev => ({ ...prev, [key]: y }))
+  }
 
   const handleProductClick = (product: Product) => {
     if (currentSource) {
@@ -50,18 +58,11 @@ function AppContent() {
   }
 
   // Deep Link Handler
-  const handleProductLink = (store: string, url: string) => {
-    if (allData[store]) {
-      const product = allData[store].products.find(p => p.product_url === url)
-      if (product) {
-        setSelectedProduct({ product, sourceName: store })
-      } else {
-        console.warn("Product not found in store data", url)
-      }
-    } else {
-      console.warn("Store data not loaded or unknown", store)
-    }
-  }
+  const { handleProductLink, handleCategoryLink } = useDeepLinkHandler(
+    allData,
+    applyDeepLink,
+    (product, sourceName) => setSelectedProduct({ product, sourceName })
+  )
 
   if (isLoading) return <Loading />
 
@@ -70,7 +71,12 @@ function AppContent() {
       <Header showControls={!isAnalysis} />
 
       {isAnalysis ? (
-        <AnalysisPage onProductLink={handleProductLink} />
+        <AnalysisPage
+          onProductLink={handleProductLink}
+          onCategoryLink={handleCategoryLink}
+          initialScrollY={scrollPositions['analysis'] || 0}
+          onSaveScrollY={(y) => handleSaveScroll('analysis', y)}
+        />
       ) : (
         currentData ? (
           <DataSource onProductClick={handleProductClick} />

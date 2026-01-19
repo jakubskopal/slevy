@@ -158,6 +158,9 @@ The `browser/` directory contains a modern web application for visualizing the a
     *   **Sorting**: Sort products by Absolute Price or Unit Price (ASC/DESC).
     *   **Comparison**: Displays aggregated offers per product, allowing easy comparison of prices across different stores and package sizes.
     *   **Unit Pricing**: Automatically calculates and highlights unit prices (e.g., per kg/l) to reveal true value.
+    *   **Deep Linking**:
+        *   **Product**: `product://<source>::<url>` - Opens specific product details.
+        *   **Category**: `category://<source>::<categoryId>?store_name=<name>&product_url=<url>` - Opens "Explore" view for specific category and optionally opens the product detail modal.
 
 ### Running the App
 1.  Navigate to `browser/`.
@@ -226,4 +229,8 @@ Failure to do this will result in the new store being ignored by the daily autom
 
 ### Temporary Files
 All temporary, test, or intermediate scripts and files should be placed in the `vibes/` directory. This keeps the main source tree clean and organized.
+
+### Refactoring Guidelines
+*   **Avoid Spaghetti Code**: Keep component logic clean and declarative. Complex logic should be extracted to utilities or hooks.
+*   **Utilities**: Encapsulate reusable logic in thematic `.ts` files in the `utils/` directory (e.g., `links.ts`, `format.ts`).
 

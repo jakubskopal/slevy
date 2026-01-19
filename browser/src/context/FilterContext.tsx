@@ -1,8 +1,9 @@
 
 import { createContext, useContext, useMemo, useEffect, ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { FilterState, Product } from '../types'
+import { Data, FilterState, Product } from '../types'
 import { useData } from './DataContext'
+import { useProductFiltering } from '../hooks/useProductFiltering'
 
 interface FilterContextType {
     filters: FilterState
@@ -17,6 +18,7 @@ interface FilterContextType {
     setSource: (name: string) => void
     view: string | null
     isAnalysis: boolean
+    applyDeepLink: (source: string, categoryId: string, storeName?: string) => void
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined)
@@ -136,51 +138,35 @@ export function FilterProvider({ children }: { children: ReactNode }) {
         })
     }
 
-    // Filter Logic
-    const processedProducts = useMemo(() => {
-        if (!currentData) return []
+    const applyDeepLink = (source: string, categoryId: string, storeName?: string) => {
+        // NOTE: This atomic update is crucial. It transitions the view and sets the category in one go,
+        // which preserves the user's context and crutially, the selected product.
+        // Keep this implementation atomic to maintain this paradigm.
+        updateParams(params => {
+            // Exit analysis mode
+            params.delete('view')
 
-        let filtered = currentData.products.filter(p => {
-            if (filters.brands.size > 0 && p.brand && !filters.brands.has(p.brand)) return false
+            // Set source
+            params.set('source', source)
 
-            if (filters.excludeCategories.size > 0) {
-                const productIds = p.category_ids || []
-                if (productIds.some(id => filters.excludeCategories.has(id))) return false
+            // Reset filters
+            params.delete('brands') // Only "included" brands supported currently
+
+            // Set category exclusive
+            params.delete('categories')
+            params.delete('exclude_categories')
+            params.append('categories', categoryId)
+
+            // Handle store
+            params.delete('stores')
+            if (storeName) {
+                params.append('stores', storeName)
             }
-
-            if (filters.categories.size > 0) {
-                const productIds = p.category_ids || []
-                if (!productIds.some(id => filters.categories.has(id))) return false
-            }
-
-            if (filters.stores.size > 0) {
-                const productStores = p.prices.map(pr => pr.store_name)
-                if (!productStores.some(s => filters.stores.has(s))) return false
-            }
-            return true
         })
+    }
 
-        if (sortOption !== 'default') {
-            filtered = [...filtered].sort((a, b) => {
-                const getRelevantPrices = (prod: Product) => {
-                    if (filters.stores.size === 0) return prod.prices;
-                    return prod.prices.filter(p => filters.stores.has(p.store_name));
-                };
-                const getMetric = (prod: Product, field: 'price' | 'unit_price', type = 'min') => {
-                    const prices = getRelevantPrices(prod);
-                    const values = prices.map(p => p[field]).filter((v): v is number => v !== null && v !== undefined);
-                    if (values.length === 0) return type === 'min' ? Infinity : -1;
-                    return type === 'min' ? Math.min(...values) : Math.max(...values);
-                };
-                if (sortOption === 'price-asc') return getMetric(a, 'price', 'min') - getMetric(b, 'price', 'min')
-                if (sortOption === 'price-desc') return getMetric(b, 'price', 'max') - getMetric(a, 'price', 'max')
-                if (sortOption === 'unit-asc') return getMetric(a, 'unit_price', 'min') - getMetric(b, 'unit_price', 'min')
-                if (sortOption === 'unit-desc') return getMetric(b, 'unit_price', 'min') - getMetric(a, 'unit_price', 'min')
-                return 0
-            })
-        }
-        return filtered
-    }, [currentData, filters, sortOption])
+    // Filter Logic
+    const processedProducts = useProductFiltering(currentData, filters, sortOption)
 
     const value = {
         filters,
@@ -194,7 +180,8 @@ export function FilterProvider({ children }: { children: ReactNode }) {
         filteredCount: processedProducts.length,
         setSource,
         view,
-        isAnalysis
+        isAnalysis,
+        applyDeepLink
     }
 
     return <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
