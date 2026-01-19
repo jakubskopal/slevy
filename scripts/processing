@@ -11,7 +11,7 @@ CURRENT_INPUT_SUFFIX="result"
 STEP_COUNTER=1
 
 if [ "$1" == "--default" ]; then
-    set -- filter_for_food enrich_brands normalize_data assign_ai_categories build_categories
+    set -- filter_for_food remove_expired_offers enrich_brands normalize_data assign_ai_categories build_categories
 fi
 
 if [ "$#" -eq 0 ]; then

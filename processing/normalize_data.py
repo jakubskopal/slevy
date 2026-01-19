@@ -10,84 +10,152 @@ import re
 import sys
 import pint
 
+# Global unit registry
+ureg = pint.UnitRegistry()
+# Configure ureg to be case-insensitive if needed, or handle variations manually
+# Common variations in Czech input
+ureg.define('kus = count = ks = piece = pc = stk')
+
+def normalize_base_unit(price):
+    """
+    Phase 1: Normalize units to base (kg, l, ks) and scale unit_price.
+    Returns True if changed.
+    """
+    unit_str = (price.get('unit') or '').lower().strip()
+    u_price = price.get('unit_price')
+    
+    if not unit_str or not u_price:
+        return False
+
+    try:
+        # Clean up unit string
+        clean_unit_str = unit_str.replace(',', '.')
+        
+        # Parse using pint
+        qty = ureg(clean_unit_str)
+        
+        new_unit = None
+        scale_factor = 1.0
+        
+        if qty.check('[mass]'):
+            base_qty = qty.to('kg')
+            new_unit = 'kg'
+            if base_qty.magnitude > 0:
+                scale_factor = 1.0 / base_qty.magnitude
+                
+        elif qty.check('[volume]'):
+            base_qty = qty.to('liter')
+            new_unit = 'l'
+            if base_qty.magnitude > 0:
+                scale_factor = 1.0 / base_qty.magnitude
+                
+        elif qty.check('count') or unit_str in ['ks', 'kus', 'piece', 'pc', 'stk']:
+             new_unit = 'ks'
+             # Normalization for count is usually 1:1 unless specific "10ks" unit string
+             if getattr(qty, 'units', None) == ureg.count or qty.dimensionless:
+                 if qty.magnitude > 0:
+                     scale_factor = 1.0 / qty.magnitude
+        
+        if new_unit and new_unit != unit_str:
+             price['unit'] = new_unit
+             price['unit_price'] = round(u_price * scale_factor, 2)
+             return True
+             
+    except Exception:
+        pass
+        
+    return False
+
+def compute_missing_size(price):
+    """
+    Phase 2: Compute Missing Package Size using Price / Unit_Price.
+    Returns True if computed.
+    """
+    p_val = price.get('price')
+    u_price = price.get('unit_price')
+    pkg_size_str = price.get('package_size')
+    unit_str = (price.get('unit') or '')
+
+    if (not pkg_size_str) and p_val and u_price and unit_str:
+         try:
+             amount = round(p_val / u_price, 2)
+             # Format: "0.5 kg", "1.25 l" - dropped trailing zeros via :g
+             new_size = f"{amount:g} {unit_str}"
+             price['package_size'] = new_size
+             price['notes'] = (price.get('notes', '') + " Size calc from price/unit").strip()
+             return True
+         except Exception:
+             pass
+    return False
+
+def compute_missing_price(price):
+    """
+    Phase 3: Compute Missing Price from Package Size * Unit Price.
+    Returns True if computed.
+    """
+    p_val = price.get('price')
+    u_price = price.get('unit_price')
+    pkg_size_str = price.get('package_size')
+    unit_str = (price.get('unit') or '').lower()
+
+    if (p_val is None or p_val == 0) and u_price and pkg_size_str:
+        try:
+            clean_size = pkg_size_str.replace(',', '.').strip()
+            quantity = ureg(clean_size)
+            
+            qty_base = 0
+            
+            if unit_str in ['kg', 'kilogram']:
+                 if quantity.check('[mass]'):
+                     qty_base = quantity.to('kg').magnitude
+            elif unit_str in ['l', 'liter', 'litr']:
+                if quantity.check('[volume]'):
+                    qty_base = quantity.to('liter').magnitude
+            elif unit_str in ['ks', 'kus', 'piece', 'pc']:
+                 if quantity.check('count') or quantity.dimensionless:
+                      if getattr(quantity, 'units', None) == ureg.count:
+                          qty_base = quantity.to('count').magnitude
+                      else:
+                          qty_base = quantity.magnitude
+            
+            if qty_base > 0:
+                calc_price = float(u_price * qty_base)
+                price['price'] = round(calc_price, 2)
+                price['notes'] = (price.get('notes', '') + " Price calc from unit").strip()
+                return True
+                
+        except Exception:
+            pass
+    return False
+
 def normalize_data(input_file, output_file):
-    ureg = pint.UnitRegistry()
-    
-    # Configure ureg to be case-insensitive if needed, or handle variations manually
-    # Common variations in Czech input
-    ureg.define('kus = count = ks')
-    
     with open(input_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    fixed_count = 0
+    # Track stats
+    fixed_price_count = 0
+    fixed_size_count = 0
+    normalized_count = 0
+
     total_products = len(data.get('products', []))
-    
     print(f"Loading {total_products} products form {input_file}...")
 
     for product in data.get('products', []):
         for price in product.get('prices', []):
-            p_val = price.get('price')
-            u_price = price.get('unit_price')
-            pkg_size_str = price.get('package_size')
-            unit = (price.get('unit') or '').lower()
+            
+            # Phase 1: Normalize base unit
+            if normalize_base_unit(price):
+                normalized_count += 1
+            
+            # Phase 2: Compute missing package size
+            if compute_missing_size(price):
+                fixed_size_count += 1
+                
+            # Phase 3: Compute missing price
+            if compute_missing_price(price):
+                fixed_price_count += 1
 
-            # We need to act if price is missing/zero but we have components
-            if (p_val is None or p_val == 0) and u_price and pkg_size_str:
-                try:
-                    # Parse package size
-                    # Clean up string: "350 g" -> "350 g"
-                    # Handle "3x50g" -> "150g" ? For now, basic parsing.
-                    
-                    # Common fix: replace ',' with '.' for decimal numbers in Czech format
-                    clean_size = pkg_size_str.replace(',', '.').strip()
-                    quantity = ureg(clean_size)
-                    
-                    qty_base = 0
-                    
-                    # Determine target base unit based on price unit
-                    # Usually price unit is 'kg', 'l', 'ks'
-                    
-                    if unit in ['kg', 'kilogram']:
-                         # Convert to kg
-                         if isinstance(quantity, (int, float)):
-                             # Dimensionless? Warning
-                             pass
-                         else:
-                             if quantity.check('[mass]'):
-                                 qty_base = quantity.to('kg').magnitude
-                             else:
-                                 # Mismatch (e.g. ml vs kg), try density=1 assumption for water/milk-like things?
-                                 # For safety, avoid unless sure.
-                                 # BUT: Many times 'g' matching 'l' is rare, usually 'ml' matches 'l'.
-                                 pass
-
-                    elif unit in ['l', 'liter', 'litr']:
-                        if quantity.check('[volume]'):
-                            qty_base = quantity.to('liter').magnitude
-                        elif quantity.check('[mass]'):
-                             # approximate 1kg = 1l?
-                             # Let's skip cross-domain for now to be safe
-                             pass
-
-                    elif unit in ['ks', 'kus', 'piece', 'pc']:
-                         # If package is "1 ks", magnitude is 1.
-                         if quantity.check('count'):
-                              qty_base = quantity.to('count').magnitude
-                         elif quantity.dimensionless:
-                              qty_base = quantity.magnitude
-                    
-                    if qty_base > 0:
-                        calc_price = float(u_price * qty_base)
-                        price['price'] = round(calc_price, 2)
-                        price['notes'] = "Price calculated from unit_price"
-                        fixed_count += 1
-                        
-                except Exception as e:
-                    # print(f"Failed to normalize {product['name']}: {e}")
-                    pass
-
-    print(f"Fixed prices for {fixed_count} offers.")
+    print(f"Stats: Normalized {normalized_count} units, Fixed {fixed_size_count} sizes, Fixed {fixed_price_count} prices.")
 
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -102,7 +170,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     # Support the pipeline arguments convention
-    # If input doesn't end in .json, assume it's a suffix + .json
     input_path = args.input
     if not input_path.endswith('.json'):
         input_path = f"{args.data_dir}/*.{args.input}.json"
@@ -111,46 +178,20 @@ if __name__ == '__main__':
         if not files:
              print(f"No files found for pattern {input_path}")
              sys.exit(1)
-        # Process all matching files
         for f in files:
-             # Construct output name
-             # if input is 'data/001.foo.json' and output arg is '002.bar'
-             # we want 'data/002.bar.json' ? 
-             # The pipeline script passes full suffix: --input result --output 001.normalize
-             # processed by script logic: data/*.result.json -> data/*.001.normalize.json
-             
-             base_name = f.split('/')[-1].replace(f'.{args.input}.json', '')
-             # Careful with replacement if suffix is simple string
-             # Better: use the logic from pipeline script? 
-             # Actually, Python script should probably handle one file 1:1 if called by pipeline loop.
-             # BUT pipeline provided by user passes suffixes.
-             # Wait, the pipeline script:
-             # python3 processing/${STEP_NAME}.py --input ${CURRENT_INPUT_SUFFIX} --output ${CURRENT_OUTPUT_SUFFIX} --data-dir ${DATA_DIR}
-             # It expects the python script to handle the globbing or the shell script handles it?
-             # "python3 processing/${STEP_NAME}.py ..."
-             # Looking at filter_for_food.py might clarify how existing steps handle this.
-             pass
-    
-    # We'll assume the python script handles globbing as per previous pattern
-    # Let's check filter_for_food.py's behavior via grep or cat if needed, but I'll write robust robust code.
-    
-    # The pipeline script passes SUFFIXES.
-    # So we look for data_dir/*.input_suffix.json
-    
-    files = glob.glob(f"{args.data_dir}/*.{args.input}.json")
-    if not files:
-        print(f"No input files found for suffix '.{args.input}.json' in {args.data_dir}")
-        sys.exit(0) # Not an error, just empty pass
+             filename = f.split('/')[-1]
+             basename = filename.replace(f'.{args.input}.json', '')
+             output_file = f"{args.data_dir}/{basename}.{args.output}.json"
+             normalize_data(f, output_file)
+    else:
+        # Direct file processing if full path provided
+        files = glob.glob(f"{args.data_dir}/*.{args.input}.json")
+        if not files:
+            print(f"No input files found for suffix '.{args.input}.json' in {args.data_dir}")
+            sys.exit(0)
 
-    for input_file in files:
-        # Determine output filename
-        # input: data/tesco.result.json
-        # args.input: result
-        # args.output: 001.normalize
-        # output: data/tesco.001.normalize.json
-        
-        filename = input_file.split('/')[-1]
-        basename = filename.replace(f'.{args.input}.json', '')
-        output_file = f"{args.data_dir}/{basename}.{args.output}.json"
-        
-        normalize_data(input_file, output_file)
+        for input_file in files:
+            filename = input_file.split('/')[-1]
+            basename = filename.replace(f'.{args.input}.json', '')
+            output_file = f"{args.data_dir}/{basename}.{args.output}.json"
+            normalize_data(input_file, output_file)

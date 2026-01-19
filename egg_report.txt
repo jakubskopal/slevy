@@ -1,0 +1,287 @@
+--- Analyzing globus ---
+Product: Schubert Čerstvá vejce Omega Pro podestýlková M 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Globus Sendvič Schwarzwaldská šunka, vejce 185g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKÁŘSTVÍ GLOBUS']
+--------------------
+Product: Ovus Vejce podestýlková M 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Maggi Přidej vejce kulajda 48g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTATNÍ POLÉVKY A POTRAVINY']
+--------------------
+Product: Ovus Podestýlková vejce L 10ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Schubert Křepelčí vejce 12 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Globus Sendvič tuňák s vejcem 170g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKÁŘSTVÍ GLOBUS']
+--------------------
+Product: Schubert Vejce podestýlková M 10ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Ovus Moravia Vejce podestýlková M 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Schubert Čerstvá vejce Cereál Q podestýlková M 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Globus Sendvič Herkules, sýr, vejce 190g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKÁŘSTVÍ GLOBUS']
+--------------------
+Product: Schubert BIO Čerstvá vejce 6 ks, různých velikostí
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Schubert vejce podestýlková L 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Čerstvá podestýlková vejce M 30 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Čerstvá podestýlková vejce XL 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Gurmán Klub Bagetová vajíčková pomazánka 150 g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKY']
+--------------------
+Product: Schubert Podestýlková vejce M 18 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Pomazánka vajíčková s rukolou Globus
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKY']
+--------------------
+Product: Gurmán Klub gurmánské vejce v aspiku 150 g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKY']
+--------------------
+Product: Maggi Přidej vejce Formanská polévka sáček 40,5 g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTATNÍ POLÉVKY A POTRAVINY']
+--------------------
+Product: Vejce M, 30 kusů, podestýlková,  vejce nosnic v halách, hmotnostní skupina M, jakostní třída A - čerstvá
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Maggi Přidej vejce Rychtářská polévka sáček 40,5 g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTATNÍ POLÉVKY A POTRAVINY']
+--------------------
+Product: Schubert Vejce volný výběh 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Varmuža Ruské vejce v aspiku 200 g
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKY']
+--------------------
+Product: Maggi Přidej vejce hovězí polévka sáček 44 g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTATNÍ POLÉVKY A POTRAVINY']
+--------------------
+Product: Maggi Přidej vejce Slepičí polévka sáček 32 g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTATNÍ POLÉVKY A POTRAVINY']
+--------------------
+--- Analyzing albert ---
+Product: Albert Vejce z podestýlky, velikost M
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Česká chuť Vejce z podestýlky, velikost M
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Česká chuť Pomazánka vajíčková
+  Categories: ['UZENINY A LAHŮDKY', 'SALÁTY A POMAZÁNKY']
+--------------------
+Product: Albert Obložené vejce
+  Categories: ['UZENINY A LAHŮDKY', 'LAHŮDKY']
+--------------------
+Product: Nature's Promise Bio Čerstvá vejce
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+Product: Dobrá vejce 3 cereálií
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE A DROŽDÍ']
+--------------------
+--- Analyzing tesco ---
+Product: MAGGI Přidej vejce Slepičí polévka sáček 32g
+  Categories: ['Trvanlivé', 'Instantní jídla a polévky', 'Polévky']
+--------------------
+Product: MAGGI Přidej vejce Rychtářská polévka sáček 40,5g
+  Categories: ['Trvanlivé', 'Instantní jídla a polévky', 'Polévky']
+--------------------
+Product: Tesco Ruské vejce v aspiku 200g
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Utopenci, aspiky a další speciality']
+--------------------
+Product: Gurmán Klub Bagetová vajíčková pomazánka 150g
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Pomazánky']
+--------------------
+Product: Tesco Pšeničný toustový chléb se šunkou, majonézovou omáčkou, vařeným vejcem a římským salátem 172g
+  Categories: ['Maso a lahůdky', 'Hotovky, sendviče a polotovary', 'Sendviče a bagety']
+--------------------
+Product: Tesco Čerstvá vejce z halového chovu M 6 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Bagetová vajíčková pomazánka
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Pomazánky']
+--------------------
+Product: Lahůdky Palma Volné Ruské vejce 130g
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Utopenci, aspiky a další speciality']
+--------------------
+Product: MAGGI Přidej vejce Formanská polévka sáček 40,5g
+  Categories: ['Trvanlivé', 'Instantní jídla a polévky', 'Polévky']
+--------------------
+Product: Tesco Čerstvá bio vejce M 6 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Tesco Pšeničný toustový chléb s tuňákem, majonézovou omáčkou, vařeným vejcem, římským salátem 186g
+  Categories: ['Maso a lahůdky', 'Hotovky, sendviče a polotovary', 'Sendviče a bagety']
+--------------------
+Product: MAGGI Přidej vejce Kulajda polévka sáček 48g
+  Categories: ['Trvanlivé', 'Instantní jídla a polévky', 'Polévky']
+--------------------
+Product: Tesco Čerstvá vejce z podestýlky S 30 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Čerstvá vejce od Kunína podestýlková M10
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Gastro Vajíčkový salát 140g
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Saláty']
+--------------------
+Product: Tesco Čerstvá vejce z halového chovu L 10 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Tesco Čerstvá vejce M 10 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Tesco Vajíčková pomazánka 135g
+  Categories: ['Maso a lahůdky', 'Uzeniny a lahůdky', 'Pomazánky']
+--------------------
+Product: Tesco Čerstvá vejce M 6 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Tesco Čerstvá vejce XL 10 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+Product: Tesco Čerstvá křepelčí vejce 18 ks
+  Categories: ['Mléčné, vejce a margaríny', 'Vejce a droždí', 'Vejce']
+--------------------
+--- Analyzing kupi ---
+Product: Vajíčkový salát Albert Retro
+  Categories: ['Lahůdky', 'Saláty']
+--------------------
+Product: Obložené vejce Vavřík
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Ruské vejce v aspiku Albert
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Vajíčková pomazánka Gastro
+  Categories: ['Lahůdky', 'Pomazánky']
+--------------------
+Product: Vejce z podestýlky M Albert
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce z podestýlky S Tesco
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce v aspiku
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Vejce z podestýlky cereální M
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vajíčkový salát
+  Categories: ['Lahůdky', 'Saláty']
+--------------------
+Product: Obložené vejce
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Vejce bio Nature's Promise
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vajíčková pomazánka Česká chuť
+  Categories: ['Lahůdky', 'Pomazánky']
+--------------------
+Product: Ruské vejce v aspiku
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Vejce z podestýlky L Albert
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce z podestýlky M
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce Henri Srdce Domova
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Obložené vejce se šunkou Hruška
+  Categories: ['Lahůdky', 'Ostatní lahůdky']
+--------------------
+Product: Vejce Bio Schubert
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce z volného výběhu Billa Premium
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vajíčkový salát Gastro
+  Categories: ['Lahůdky', 'Saláty']
+--------------------
+Product: Vejce z podestýlky M Jeřábek & Vodrážka
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vejce z podestýlky bio Srdce Domova
+  Categories: ['Mléčné výrobky a vejce', 'Vejce']
+--------------------
+Product: Vajíčkový salát Lahůdky Vavřík
+  Categories: ['Lahůdky', 'Saláty']
+--------------------
+--- Analyzing billa ---
+Product: Podestýlková vejce M 30 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: MAGGI Přidej vejce Hovězí polévka sáček 44g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: Podestýlková vejce Srdce domova L 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: Vitana Už jen vejce Kuřecí nudlová polévka 38g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: BILLA Premium Čerstvá vejce slepic ve volném výběhu M 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: MAGGI Přidej vejce Slepičí polévka sáček 32g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: MAGGI Přidej vejce Formanská polévka sáček 40,5g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: Podestýlková vejce Srdce domova L 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: BILLA Premium Čerstvá vejce slepic ve volném výběhu M+L 6 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: BILLA Ready Tuňákový sendvič s vajíčkem a pórkem s majonézou 180g
+  Categories: ['MASO A UZENINY', 'HOTOVÁ JÍDLA']
+--------------------
+Product: BILLA Ready Salát s tuňákem a vejcem dresink typu Nicoise 220g
+  Categories: ['MASO A UZENINY', 'HOTOVÁ JÍDLA']
+--------------------
+Product: Křepelčí vejce, 12 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: Srdce domova Vejce v aspiku 200g
+  Categories: ['MASO A UZENINY', 'SALÁTY']
+--------------------
+Product: BILLA Ready Polévka kulajda s houbami vejcem a bramborami 400g
+  Categories: ['MASO A UZENINY', 'HOTOVÁ JÍDLA']
+--------------------
+Product: Vitana Už jen vejce Česnečka polévka 22g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: Podestýlková vejce Srdce domova M 10 ks
+  Categories: ['MLÉČNÉ A CHLAZENÉ', 'VEJCE & DROŽDÍ']
+--------------------
+Product: MAGGI Přidej vejce Kulajda polévka sáček 48g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------
+Product: MAGGI Přidej vejce Rychtářská polévka sáček 40,5g
+  Categories: ['TRVANLIVÉ POTRAVINY', 'INSTANTNÍ POLÉVKY']
+--------------------

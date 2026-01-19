@@ -113,18 +113,35 @@ Which executes the following steps in order:
     *   **Action**: Filters products to keep only food-related items using a keyword whitelist (positive) and blacklist (negative).
     *   **Output**: `*.001.filter_for_food.json`
 
-2.  **Enrich Brands** (`processing/enrich_brands.py`)
+2.  **Remove Expired Offers** (`processing/remove_expired_offers.py`)
     *   **Input**: `*.001.filter_for_food.json`
-    *   **Action**: Guesses missing brand names from product titles using heuristics (e.g., "Coca-Cola Zero" -> Brand: "Coca-Cola") if the source didn't provide structured brand data.
-    *   **Output**: `*.002.enrich_brands.json`
+    *   **Action**: Filters out price offers where `validity_end` date is in the past.
+    *   **Output**: `*.002.remove_expired_offers.json`
 
-3.  **Build Categories** (`processing/build_categories.py`)
-    *   **Input**: `*.002.enrich_brands.json`
+3.  **Enrich Brands** (`processing/enrich_brands.py`)
+    *   **Input**: `*.002.remove_expired_offers.json`
+    *   **Action**: Guesses missing brand names from product titles using heuristics (e.g., "Coca-Cola Zero" -> Brand: "Coca-Cola") if the source didn't provide structured brand data.
+    *   **Output**: `*.003.enrich_brands.json`
+
+4.  **Normalize Data** (`processing/normalize_data.py`)
+    *   **Input**: `*.003.enrich_brands.json`
+    *   **Action**: 
+        *   Converts units to base units (e.g., g -> kg).
+        *   Calculates missing package sizes from price/unit_price.
+    *   **Output**: `*.004.normalize_data.json`
+
+5.  **Assign AI Categories** (`processing/assign_ai_categories.py`)
+    *   **Input**: `*.004.normalize_data.json`
+    *   **Action**: Uses mappings or heuristics to assign standardized category IDs.
+    *   **Output**: `*.005.assign_ai_categories.json`
+
+6.  **Build Categories** (`processing/build_categories.py`)
+    *   **Input**: `*.005.assign_ai_categories.json`
     *   **Action**: 
         *   Constructs a hierarchical category tree from the flat product list.
         *   Assigns stable IDs to categories.
         *   Tags each product with the IDs of its category lineage.
-    *   **Output**: `*.003.build_categories.json` -> Final `*.processed.json`
+    *   **Output**: `*.006.build_categories.json` -> Final `*.processed.json`
 
 ## Browser Application
 

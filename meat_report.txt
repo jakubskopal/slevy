@@ -1,0 +1,640 @@
+
+=== Analyzing globus ===
+PATH: UZENINY A LAHŮDKY -> SALÁMY
+  - Drůbežářský závod Klatovy Kuřecí podkova 450 g
+  - Carchelejo Salchichon krůtí plátky 80 g
+  - Carchelejo Fuet imperial krůtí klobása 160 g
+
+PATH: TRVANLIVÉ POTRAVINY -> SLANÉ POCHOUTKY
+  - Jihočeské jerky hovězí bejby 20g
+  - Jihočeské jerky Hovězí s bylinkami 20g
+  - Indiana Jerky beef (hovězí) less salt 25 g
+
+PATH: HOTOVÁ JÍDLA -> HOTOVÁ JÍDLA A PŘÍLOHY
+  - Konečně vývar hovězí 450 ml
+  - Krahulík Kuřecí gyros 300g
+  - Apetit Vepřové výpečky, zelí, knedlík 510g
+
+PATH: TRVANLIVÉ POTRAVINY -> INSTATNÍ POLÉVKY A POTRAVINY
+  - Maggi Magic Asia Smažené nudle s kuřecí příchutí 121g
+  - Vimi Instantní nudlová polévka kuřecí 50 g
+  - Hamé Nudlová polévka kuřecí 60g
+
+PATH: MRAŽENÉ POTRAVINY -> MASO A RYBY
+  - Kuřecí horní stehna mražená 500g
+  - Holandský pstruh kuchaný 900g
+  - Nautic Krevety gambas 250g
+
+PATH: MASO A RYBY -> DRŮBEŽÍ A KRÁLIČÍ
+  - Vodňanské kuře Uzené kuřecí filety 320g
+  - Prominent Krůtí gulášová směs
+  - Prominent Krůtí stehenní plátek
+
+PATH: MASO A RYBY -> ŘEZNICTVÍ GLOBUS
+  - Vepřová krkovice bez kosti Globus
+  - Vepřová kýta Globus
+  - Uzená pečeně s kostí Globus
+
+PATH: NAPLŇTE SVOU LEDNIČKU
+  - Kuřecí párečky 220g
+
+PATH: MASO A RYBY -> UZENÁ MASA A SLANINY
+  - Uzená krkovice bez kosti
+  - Kostelecké Uzeniny Uzený hovězí jazyk
+  - Uzená kýta bez kosti
+
+PATH: HOTOVÁ JÍDLA -> HOTOVÁ JÍDLA
+  - Prominent Svačina krůtí s kukuřicí 130g
+  - Prominent Krůtí maso s koriandrem 170g
+  - Prominent Krůtí stehno s koriandrem 170g
+
+PATH: MLÉČNÉ A CHLAZENÉ -> MÁSLO, TUKY A MARGARÍNY
+  - Anna Vepřové sádlo 1kg
+  - Brick Tradiční vepřové sádlo 450 g
+  - Váš Výběr Vepřové sádlo 250g
+
+PATH: MASO A RYBY -> HOVĚZÍ
+  - Krahulík Tataráček 150 g
+  - Biopark BIO hovězí žebro na polévku
+
+PATH: MRAŽENÉ POTRAVINY -> HOTOVÁ JÍDLA A POLOTOVARY
+  - Jeden Tag kuřecí mini řízky s kukuř. lupínky 500g
+  - Vodňanské kuře Smažené kuřecí nugety 360 g
+  - Kitchen joy, Thai cube kuřecí creamy tom yum s nudlemi 320g
+
+PATH: UZENINY A LAHŮDKY -> ŠUNKY A SLANINY
+  - Le & Co Farmářské maso
+  - Maso Jičín Uhlířská slanina
+  - Le & Co Krůtí šunka pro děti krájená 100 g
+
+PATH: UZENINY A LAHŮDKY -> PAŠTIKY A MASNÉ VÝROBKY
+  - Ravy Pečená masová sekaná se sýrem 500 g
+  - Prominent Krůtí paštika 80 g
+  - Škvařené vepřové sádlo 250g
+
+PATH: TRVANLIVÉ POTRAVINY -> MEZINÁRODNÍ KUCHYNĚ
+  - Jarní vepřové závitky s omáčkou 300g
+
+PATH: TRVANLIVÉ POTRAVINY -> KOŘENÍ A DOCHUCOVADLA
+  - Cibule Bistro Hovězí vývar jako polévka 1 l
+  - Alnatura BIO Hovězí vývar 66 g
+  - Berger Krůtí šunka 100 g
+
+PATH: UZENINY A LAHŮDKY -> PÁRKY A KLOBÁSY
+  - Drůbežářský závod Klatovy Kuřecí dětské párky 250 g
+  - Drůbežářský závod Klatovy Kuřecí koktejlové párky 250 g
+  - Drůbežářský závod Klatovy kuřecí lahůdkové párky 850 g
+
+PATH: OVOCE A ZELENINA -> ZELENINA
+  - Jihočeská zelenina Salát César s grilovaným kuřecím masem a krutonky 210 g
+
+PATH: HOTOVÁ JÍDLA -> RESTAURACE GLOBUS
+  - Globus fresh 'n' go Vepřové maso na smetaně, se žampiony a nudlemi 400g
+
+
+=== Analyzing albert ===
+PATH: TRVANLIVÉ -> KONZERVOVANÉ POTR.
+  - Rekord Vepřové výpečky staročeské
+  - Hamé Vepřové maso ve vlastní šťávě
+  - Hamé Vepřové ve vlastní šťávě
+
+PATH: MASO A RYBY -> DRŮBEŽ
+  - Kuřecí krky
+  - Kachna chlazená
+  - Kachní prsa chlazená s kostí a kůží
+
+PATH: UZENINY A LAHŮDKY -> ŠUNKY A SLANINY
+  - Le & Co Krůtí šunka pro děti krájená
+  - Kuřecí prsní šunka standardní krájená
+  - Albert Krůtí prsní filet
+
+PATH: UZENINY A LAHŮDKY -> HOTOVKY A PŘÍLOHY
+  - Fresh Bistro Kuřecí kebab salát
+  - Albert Kuřecí řízek s bramborovou kaší
+  - Fresh Bistro Polévka exotická s kuřecím masem
+
+PATH: TRVANLIVÉ -> INSTANTNÍ POKRMY
+  - Hamé Salsa Napoletana masová směs na špagety
+  - Yum Yum Instantní polévka příchuť hovězí
+  - Vitana Do hrnečku Kuřecí s nudlemi
+
+PATH: MASO A RYBY -> HOVĚZÍ A TELECÍ
+  - Hovězí zadní kýta bez kosti
+  - Hovězí nudličky
+  - Nature's Promise Bio Hovězí zadní bez kosti
+
+PATH: MASO A RYBY -> VEPŘOVÉ
+  - Albert Uzená vepřová krkovice
+  - Královská vepřová kýta bez kosti řízky
+  - Albert Kladenská pečeně
+
+PATH: UZENINY A LAHŮDKY -> PÁRKY A KLOBÁSY
+  - Vodňanské kuře Kuřecí párky
+  - Česká chuť Mini párečky kuřecí
+  - Vodňanské kuře Kuřecí párky se sýrem
+
+PATH: TRVANLIVÉ -> KOŘENÍ A OCHUCOVADLA
+  - Knorr Bohatý bujón kuřecí
+  - Nature's Promise Bio Bujón hovězí
+  - Maggi Bujón hovězí tekutý
+
+PATH: UZENINY A LAHŮDKY -> PAŠTIKY
+  - Viva Krůtí ve vlastní šťávě
+  - Albert Masová sekaná se sýrem
+  - Maso Uzeniny Polička Královská paštika
+
+PATH: TRVANLIVÉ -> SLANÉ
+  - Jack Link's Beef Jerky Sušené hovězí Sweet&Hot
+  - Chio Fried Chicken Style chipsy s kuřecí příchutí
+  - Indiana Beef Jerky Sušené hovězí Original
+
+PATH: MASO A RYBY -> MLETÉ MASO
+  - Albert Excellent Burger Angus
+  - Výrobek z mletého masa mix
+  - Mleté maso mix, vepřové a hovězí 30 % tuku
+
+PATH: MASO A RYBY -> RYBY
+  - Rybí trh Losos kisuč, filet s kůží
+  - Rybí trh Sumeček africký, filet
+  - Rybí trh Losos, filet s kůží
+
+PATH: UZENINY A LAHŮDKY -> LAHŮDKY
+  - Viva Krůtí s vejci
+
+PATH: UZENINY A LAHŮDKY -> SALÁMY
+  - Albert Kuřecí junior
+
+
+=== Analyzing tesco ===
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Klobásy
+  - Lidová klobása 0,450kg
+  - Kmotr Uheráková klobása 180g
+  - Ostravská klobása
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Drůbeží
+  - Vodňanské Kuře Kuřecí stehenní řízky s rodokmenem
+  - Tesco Kuřecí prsní řízek
+  - Tesco Kuřecí hřbety
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Salámy a mini salámky
+  - Tesco Vysočina 700g
+  - Tesco Salám Herkules 100g
+  - Krahulík Vysočina fit krájená 0,100kg
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Saláty
+  - Tesco Bramborový salát 150g
+  - Tesco Salát coleslaw 300g
+  - Gastro Pochoutkový salát 140g
+
+PATH: Trvanlivé -> Instantní jídla a polévky -> Bujóny
+  - MAGGI Hovězí bujón v kostce 5l 10 x 10g
+  - Vitana Tekutý bujón kuřecí 180ml
+  - Vitana Vývar kuřecí 4 ks 112g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Vepřové
+  - Snadné Vaření Řeznická sekaná 0,700kg
+  - Vepřové koleno s kostí
+  - Tesco Vepřové koleno
+
+PATH: Maso a lahůdky -> Tapas -> Hummus, pomazánky a omáčky
+  - Tesco Cizrnovo-řepová pomazánka se sezamovou a křenovou pastou 90g
+  - Tesco Cizrnovo-sezamová pomazánka s limetkovou šťávou s tyčinkami grissini 140g
+  - Tesco Cizrnovo-sezamová pomazánka s kari s žitnými plátky 140g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Šunky, slaniny a speciality
+  - Tesco Kuřecí prsní šunka 100g
+  - Wein Bauernschinken 80g
+  - LE & CO Šunka nejvyšší jakosti shaved 100g
+
+PATH: Trvanlivé -> Instantní jídla a polévky -> Instantní jídla
+  - Cup Noodles Instantní nudlová polévka s hovězí příchutí v asijském stylu pikantní 64g
+  - Cup Noodles Instantní pšeničné nudle s ochucující omáčkou s příchutí hovězí sukiyaki 89g
+  - Cup Noodles Instantní nudlová polévka s kuřecí příchutí v asijském stylu 63g
+
+PATH: Dítě -> Strava pro děti -> Maso-zeleninové příkrmy
+  - HiPP Mrkev s bramborami a lososem 190g
+  - HAMI masozeleninový příkrm Těstoviny s hovězím, rajčaty a mrkví, 8+ 200g
+  - Hipp Bio zeleninová polévka s telecím masem 190g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Utopenci, aspiky a další speciality
+  - Šunka v aspiku
+  - Tesco Ruské vejce v aspiku 200g
+  - Gurmán Klub Šunkový závitek v aspiku 150g
+
+PATH: Trvanlivé -> Instantní jídla a polévky -> Polévky
+  - Tesco Instantní nudlová polévka s hovězí příchutí 61g
+  - InTaste Instantní nudlová polévka s kuřecí příchutí na čínský způsob 65g
+  - Yum Yum Kuřecí příchuť 60g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Paštiky a masné výrobky
+  - Tesco Farmářská paštika 150g
+  - Tesco Paštika s kachními játry 150g
+  - Tesco Finest Paštika s husími játry 160g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Pomazánky
+  - Krajánek Trio pomazánek cottage 3 x 60g
+  - Tesco Nivová pomazánka 135g
+  - Gurmán Klub Rybí pomazánka 150g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Sous-vide a další pomocníci
+  - Tesco Vepřové koleno s kmínem
+  - Krahulík Kuřecí gyros sous-vide 300g
+  - Krahulík Trhané hovězí sous-vide 300g
+
+PATH: Trvanlivé -> Dresinky a omáčky -> Omáčky a marinády
+  - MAGGI Nápady Zapečené těstoviny s kuřecím masem sáček 39g
+  - Vitana Steaková omáčka na trhané maso 250ml
+  - Tesco Rajčatová omáčka s hovězím masem 420g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Hlavní jídla
+  - Apetit Alpský povidlový knedlík s jemným krémem 410g
+  - Simply Fresh Sous Vide trhané vepřové maso s pečenou mrkví a šťouchanými brambory 400g
+  - Tesco Opečené kousky masa z kuřecího stehna 350g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Těsta, tortilly a pizzy
+  - Brick Čerstvé těsto na pizzu 280g
+  - Babické listové těsto 300g
+  - Tesco Finest Pizza Quattro Formaggi 450g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Přílohy a pečivo k dopečení
+  - Farmland Bageta s česnekovým máslovým přípravkem 175g
+  - Tesco Houskový knedlík 600g
+  - Svoboda Knedlík exclusive 500g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Párky a špekáčky
+  - Morliny Berlinki Se sýrem 250g
+  - Ponnath Vídeňské minipárečky se sýrem 200g
+  - Chodura Šunkové párky
+
+PATH: Zvíře -> Pro psy -> Konzervy
+  - Pedigree S hovězím v želé 400g
+  - Meat Care Real Meal hovězí konzerva 400g
+  - Pedigree Junior s kuřecím v želé 400g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Hovězí a telecí
+  - Hovězí přední žebro s kostí volné
+  - Tesco Hovězí kližka
+  - Hovězí plec kulatá
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Sekaná, tlačenky a tataráček
+  - Masna Studená Venkovská tlačenka 200g
+  - Selská tlačenka
+  - Masna Studená Šunková tlačenka 200g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Rybí speciality
+  - Rybex Sardelová pasta 60g
+  - Rybex Rybí pepřenky 140g
+  - Rybex Pasta z nepravého kaviáru 100g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Sendviče a bagety
+  - Tesco Chicken Strips tortilla 175g
+  - Tesco Pšeničný toastový chléb s krůtí šunkou, omáčkou a římským salátem 157g
+  - Tesco Pšeničný toustový chléb se šunkou, majonézovou omáčkou, vařeným vejcem a římským salátem 172g
+
+PATH: Trvanlivé -> Konzervované potraviny -> Konzervované masné výrobky
+  - Mei Ning Vepřové maso ve vlastní šťávě 400g
+  - Zwan Vepřové párky hotdogs 8 ks 270g
+  - Viva Vepřové maso 120g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Sádlo a škvarky
+  - Škvařené vepřové sádlo 250g
+  - Tesco Škvařené vepřové sádlo 250g
+  - Gourmet Gornitzki Sádlo škvařené vepřové 200g
+
+PATH: Zvíře -> Pro psy -> Paštiky
+  - Cesar Kompletní mokré krmivo pro dospělé psy s krůtím, hovězím a bylinkami 150g
+  - Cesar Kompletní mokré krmivo pro dospělé psy s hovězím a játry 150g
+  - Pet Specialist Ragú s kuřecím a zeleninou 300g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Uzené
+  - Tesco Uzená vepřová plec
+  - Tesco Uzený vepřový bok
+  - Kostelecké Uzeniny Uzená krkovice bez kosti
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Ryby a mořské plody
+  - Nowaco Losos obecný filet s kůží vakuum
+  - Rybářství Chlumec Nad Cidlinou Pražma královská kuchaná
+  - Krevety vařené 500g
+
+PATH: Trvanlivé -> Konzervované potraviny -> Paštiky
+  - Tesco Paštika s kuřecími játry a česnekem 100g
+  - Viva Krůtí maso s vejci 120g
+  - Viva Uzené maso s vejci 120g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Vnitřnosti a kosti
+  - Tesco Vepřová játra
+  - Tesco Hovězí dršťky 0,600kg
+  - Tesco Kuřecí srdce
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Měkké salámy
+  - DZ Klatovy Kuřecí junior 400g
+  - Gothajský salám
+  - Kostelecké Uzeniny Šunkový salám 0,400kg
+
+PATH: Trvanlivé -> Slané snacky -> Jerky
+  - Jim Jerky Prémiové sušené maso hovězí s příchutí chilli Sriracha 23g
+  - Jim Jerky Prémiové sušené maso hovězí s příchutí 3 druhy pepře 23g
+  - Jim Jerky Prémiové sušené maso hovězí s příchutí slaniny 23g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Saláty
+  - Tesco Caesar salát s kuřecími kousky a dresinkem 210g
+  - Tesco Salát z vařené černé čočky a kuskusu s cizrnovo-sezamovou pastou 220g
+  - Tesco Salát s tuňákem, vejci a jogurtovým dresinkem 230g
+
+PATH: Maso a lahůdky -> Tapas -> Tapas se zeleninou a sýry
+  - Tesco Finest Výběr oliv 210g
+  - Tesco Marinovaná zelená paprika plněná čerstvým sýrem 90g
+  - Tesco Marinovaná červená paprika plněná čerstvým sýrem 90g
+
+PATH: Pekárna -> Volné pečivo -> Slané pečivo
+  - Tyčinka sweet chilli s kuřecím masem 91g
+
+PATH: Trvanlivé -> Koření a dochucovadla -> Sušené koření
+  - Kotányi Mleté maso 23g
+  - Avokádo Krůtí maso 25g
+  - Kotányi Uzená směs na maso 25g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Palačinky
+  - Tesco Palačinky s jablky a skořicí 400g
+  - Tesco Palačinky 350g
+  - Tesco Palačinky s tvarohem a rozinkami 400g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Polévky
+  - Brick Dršťková polévka pikant 650g
+  - Tesco Rajčatová polévka se sýrem 400g
+  - Tesco Kuřecí polévka s nudlemi 400g
+
+PATH: Maso a lahůdky -> Z našich pultů -> Sekaná, aspiky a další speciality
+  - Tesco Vepřový zabijačkový balíček
+  - Vepřové škvarky
+  - Jelítka
+
+PATH: Mražené -> Mražené polotovary a hotová jídla -> Mražená hotová jídla
+  - Schär Kuřecí prsty 375g
+  - Vodňanské Kuře Do 15 minut Kuřecí nugety smažené 360g
+  - Tesco Kuřecí směs se zeleninou a chilli, citronovou trávou a galangalem 12 ks 180g
+
+PATH: Mražené -> Mražené maso a polotovary -> Mražená drůbež
+  - Králičí stehno-kýta 1,000kg
+  - Vodňanské Kuře Kuřecí žaludky 500g
+  - P'tit Duc Baby kuře 500g
+
+PATH: Trvanlivé -> Konzervované potraviny -> Hotová jídla
+  - Hamé EasyCup Špagetka masozeleninová směs na špagety 400g
+  - Tesco Lunchmeat vepřové maso 300g
+  - Hamé Salsa Napoletana masová směs k přípravě špaget 420g
+
+PATH: Maso a lahůdky -> Grilování -> Dresinky, marinády a koření na grilování
+  - Vitana Grilovací koření nepálivé 25g
+  - Kotányi Grilovací koření s česnekem 30g
+  - Kotányi Grilovací koření 30g
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Gnocchi, plněné těstoviny a omáčky
+  - Hearty Food Co. Ham Cappelletti 500g
+  - Tesco Bramborové noky 500g
+  - Hearty Food Co. Spinach & Ricotta Tortelloni 500g
+
+PATH: Domov a zábava -> Zahrada -> Grilování a vaření
+  - BBQ Teploměr na maso
+
+PATH: Trvanlivé -> BIO -> Cukr, oleje, sirupy a vaření
+  - Probio Hovězí bezlepkový bujón 66g
+
+PATH: Zvíře -> Pro psy -> Salámy
+  - Brunos Salám pro psy s kuřecím 1000g
+  - Pet Specialist Salám pro psy s kuřecím 1000g
+
+PATH: Maso a lahůdky -> Uzeniny a lahůdky -> Sushi
+  - Sushitime California 260g
+
+PATH: Mražené -> Mražené maso a polotovary -> Polotovary
+  - Nowaco Listové těsto 3 ks 400g
+  - Vodňanské Kuře Babiččiny játrové knedlíčky 220g
+  - Nowaco Plněné papriky v rajské omáčce 600g
+
+PATH: Trvanlivé -> Koření a dochucovadla -> Přísady
+  - Kucharek Hovězí bujón 12 x 10g (120g)
+
+PATH: Maso a lahůdky -> Hotovky, sendviče a polotovary -> Burgery
+  - Tesco Burger z vepřového masa 2 x 159g
+  - Tesco Burger z krůtího a kuřecího masa 2 x 159g
+
+PATH: Speciální výživa -> Bez lepku -> Instantní pokrmy
+  - Tesco Free From Bolognese bezlepkové instantní nudle se sušenou zeleninou a hovězím masem 60g
+
+PATH: Maso a lahůdky -> Maso, ryby a speciality -> Králičí
+  - Tesco Králík bez hlavy
+
+PATH: Speciální výživa -> Vegetariánské a veganské -> Rostlinné slané a uzené výrobky
+  - VIOLIFE Viodeli Plátky s kuřecí příchutí 100g
+  - VIOLIFE Viodeli Plátky s krůtí příchutí 100g
+
+PATH: Maso a lahůdky -> Z našich pultů -> Sádlo
+  - Vepřové sádlo hřbetní
+
+PATH: Maso a lahůdky -> Grilování -> Uzeniny na gril
+  - Tesco Grill Master Klobása v maďarském stylu 0,400kg
+
+
+=== Analyzing kupi ===
+PATH: Maso, uzeniny a ryby -> Ryby a mořské plody
+  - Krevety Albert
+  - Losos uzený K-Classic
+  - Tapas Krevety v chilli Albert Excellent
+
+PATH: Maso, uzeniny a ryby -> šunky a salámy
+  - Pečeně debrecínská
+  - Šunka dětská Kája nejvyšší jakosti Krásno
+  - Šunka vinohradská nejvyšší jakosti LE&CO
+
+PATH: Maso, uzeniny a ryby -> Párky a klobásy
+  - Salám kuřecí točený Vodňanské kuře
+  - Párky Kája Krásno
+  - Párky hot dog Kostelecké uzeniny
+
+PATH: Lahůdky -> Hotová jídla a přílohy
+  - Kuřecí kebab Morliny
+  - Smažené kuřecí Frikadely se sýrem Vodňanské kuře
+  - Tatarský biftek MASO Made by makro
+
+PATH: Konzervy -> Konzervované maso a hotová jídla
+  - Maso kuřecí kousky Just Meat
+  - Jerky Vix
+  - Maso vepřové Viva
+
+PATH: Maso, uzeniny a ryby -> Vepřové maso
+  - Vepřová pečeně na kámen Albert
+  - Maso na guláš vepřové Globus
+  - Vepřová kýta bez kosti
+
+PATH: Maso, uzeniny a ryby -> Ostatní uzeniny
+  - Uzený bok Kostelecké uzeniny
+  - Uzená krkovice Albertovo uzenářství
+  - Moravské maso uzené
+
+PATH: Mražené a instantní potraviny -> Hotová mražená jídla
+  - Kuřecí stripsy mražené Cornflakes Nowaco
+  - Nugetky kuřecí smažené mražené Safari Vodňanské kuře
+  - Gyoza knedlíčky kuřecí se zeleninou mražené Bibigo
+
+PATH: Mražené a instantní potraviny -> Mražené maso, drůbež a ryby
+  - Směs kuřecí polévková mražená DZ Klatovy
+  - Losos Gorbuša filety mražený Nowaco
+  - Křupavá křidélka mražená Nowaco
+
+PATH: Maso, uzeniny a ryby -> Drůbež
+  - Kuřecí řízky mix Vocílka
+  - Kuře K-Purland
+  - Kuřecí stehenní řízky K-Purland
+
+PATH: Maso, uzeniny a ryby -> Hovězí maso
+  - Telecí falešná svíčková Metro Chef
+  - Hovězí kližka
+  - Hovězí maso na guláš Kostelecké uzeniny
+
+PATH: Vaření a pečení -> Tuky a oleje
+  - Sádlo vepřové Brick
+  - Sádlo vepřové Ilsa
+  - Sádlo vepřové škvařené Tesco
+
+PATH: Maso, uzeniny a ryby -> Marinované a uzené maso
+  - Vepřový bok marinovaný s kostí
+  - Kuřecí křídla uzená
+  - Pečeně uzená bez kosti Krahulík
+
+PATH: Maso, uzeniny a ryby -> Ostatní maso
+  - Mleté maso mix
+  - Mleté maso mix Albert
+  - Mělněné maso mix Kostelecké uzeniny
+
+PATH: Lahůdky -> Zabijačkové speciality
+  - Tlačenka masová Bivoj
+
+PATH: Konzervy -> Ostatní konzervované potraviny
+  - Vepřové maso ve vlastní šťávě K-Classic
+
+PATH: Vaření a pečení -> Koření a ochucovadla
+  - Koření Mleté maso Orient
+
+PATH: Zdravá výživa -> Rostlinné výrobky
+  - Mleté maso Veggie Nature's Promise
+
+PATH: Maso, uzeniny a ryby -> Zvěřina
+  - Kýta jelení Petron
+
+PATH: Vaření a pečení -> Polotovary
+  - Kuřecí nugety Vodňanské kuře
+  - Kuřecí nugetky obalované bio Nature's Promise
+
+PATH: Mražené a instantní potraviny -> Ostatní mražené potraviny
+  - Kuřecí stripsy obalované mražené
+
+PATH: Konzervy -> Paštiky
+  - Paštika játrová písecká Maso uzeniny Písek
+
+PATH: Vaření a pečení -> Bujony
+  - Bujon Masox Vitana
+
+
+=== Analyzing billa ===
+PATH: MASO A UZENINY -> HOTOVÁ JÍDLA
+  - BILLA Ready Dršťková polévka 400g
+  - Vimeal Restované nudle s kuřecím masem 350g
+  - BILLA Ready Debrecínská bageta se sýrem eidam a jarní cibulkou s rajčatovým dresingem 210g
+
+PATH: MASO A UZENINY -> VEPŘOVÉ MASO
+  - VOCÍLKA Vepřové maso mělněné speciál, 300g
+  - Vepřová krkovice bez kosti plátky 375g
+  - Uzená vepřová krkovice bez kosti
+
+PATH: MASO A UZENINY -> LAHŮDKY
+  - Hamé Pomazánka tuňák 100g
+  - Švéda Vepřové maso od sedláka 420g
+  - Viva Uzené maso s vejci 120g
+
+PATH: MASO A UZENINY -> ŠUNKY & SALÁMY
+  - clever Šunkový salám 100g
+  - DZ Klatovy Kuřecí debrecínka krájená 0,100kg
+  - BILLA Chorizo 90g
+
+PATH: MASO A UZENINY -> SALÁTY
+  - Srdce domova Sýrová pomazánka s česnekem 135g
+  - Norský salát 150 g
+  - Tudlee Česneková pomazánka 120g
+
+PATH: MASO A UZENINY -> UZENINY
+  - BILLA Spanish Tapas 120g
+  - Kostelecké Uzeniny Křemešník 380g
+  - BILLA Bačajský pikant krájený 100g
+
+PATH: KONZERVOVANÉ POTRAVINY -> MASOVÉ
+  - Hamé Královská šunka 340g
+  - PAŠTIKA HRUBÁ ARDÉNSKÁ SE ZEL. PEPŘEM 125G
+  - Viva Drůbeží lunch, 180g
+
+PATH: TRVANLIVÉ POTRAVINY -> INSTANTNÍ POLÉVKY
+  - MAGGI Přidej vejce Hovězí polévka sáček 44g
+  - Oyakata Instantní nudlová polévka s kuřecí příchutí 63 g
+  - Vitana Čínská kuřecí pikantní do hrnečku 16g
+
+PATH: MASO A UZENINY -> VEGETARIÁNSKÉ
+  - BILLA Ready Hummus batáty & dýně 160g
+  - BILLA BIO Tempeh uzený 190g
+  - Pâtifu Prémiová tofu paštika toskánská 100g
+
+PATH: MASO A UZENINY -> DRŮBEŽ
+  - VOCÍLKA Kuřecí prsní řízky
+  - VOD KURECI MEDAILONKY Z PRSNIHO RIZKU/2 KG / 4 KS V PREPRAVCE
+  - SA  RB KUR.KRIDLA  VOD, DZK, RAB/4 KS PREPRAVKA
+
+PATH: MRAŽENÉ -> HOTOVÁ JÍDLA
+  - Nowaco Kuřecí hamburger 280g
+  - BILLA Předsmažené obalované kuřecí kousky se sladkou chilli omáčkou a kari omáčkou 300g
+  - BILLA Kuřecí křídla obalovaná předsmažená 750g
+
+PATH: TRVANLIVÉ POTRAVINY -> POLOTOVARY
+  - Knorr Bohatý Bujón Kuřecí 4 x 28g (112g)
+  - Vitana Tekutý bujón hovězí 180ml
+  - MAGGI Instantní nudle s kuřecí příchutí sáček 59,2g
+
+PATH: MASO A UZENINY -> RYBY
+  - SKIN Losos filet s kůží
+  - PRETO Ryba Žilina Treska exklusiv 140g
+  - Filet z lososa obecného s kůží, rozmrazeno
+
+PATH: MLÉČNÉ A CHLAZENÉ -> ČERSTVÉ & TAVENÉ SÝRY
+  - Smetanito Tavený sýr s krůtí šunkou 140g
+  - Veselá Kráva S krůtí šunkou 120g
+
+PATH: TRVANLIVÉ POTRAVINY -> SŮL & KOŘENÍ
+  - Kucharek Masový bujón extra silný 6 x 11g (66g)
+  - MAGGI Tekutý Bujón Hovězí 160g
+  - Vitana Natur Hovězí bujón s kořenovou zeleninou 6 x 10g (60g)
+
+PATH: MASO A UZENINY -> PÁRKY
+  - Kostelecké Uzeniny Poctivé párky vídeňské 0,180kg
+  - Ponnath ŘEZNIČTÍ MISTŘI Vídeňské minipárečky 200g
+  - Kuřecí párky jemné 250 g
+
+PATH: MASO A UZENINY -> SLANINA
+  - VOCÍLKA Anglická slanina plátky 100g
+  - Gierlinger Slanina plátkovaná 100g
+  - VOCÍLKA Anglická slanina 200g
+
+PATH: MASO A UZENINY -> HOVĚZÍ MASO
+  - VOCÍLKA Hovězí maso mělněné, 300g
+  - Hovězí steak z plece 400g
+  - Hovězí burgersteak dvouručák 400g
+
+PATH: TRVANLIVÉ POTRAVINY -> OMÁČKY
+  - inzersdorfer Pure Beef Rajčatová omáčka s hovězím masem a parmezánem 400g
+  - inzersdorfer Pure Beef Rajčatová omáčka s hovězím masem, jalapeno a chilli 400g
+
+PATH: SLANÉ SNACKY -> SUŠENÉ MASO
+  - Jim Jerky Prémiové sušené maso hovězí s příchutí 3 druhy pepře 23g
+  - Jim Jerky Prémiové sušené maso krůtí 23g
+  - Jim Jerky Prémiové sušené maso hovězí 23g
+
+PATH: MASO A UZENINY -> JINÉ MASO
+  - RAB KRALIK CELY S HLAVOU/5 KUSU / KRT / 7KG
+
