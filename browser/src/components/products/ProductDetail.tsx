@@ -5,10 +5,11 @@ import { formatPrice } from '../../utils/format'
 
 interface ProductDetailProps {
     product: Product
+    dataSourceName: string
     onClose: () => void
 }
 
-export const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
+export const ProductDetail: React.FC<ProductDetailProps> = ({ product, dataSourceName, onClose }) => {
     // Stop propagation when clicking modal content to prevent closing
     const handleContentClick = (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -28,7 +29,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }
                     <span className="modal-brand">{brand}</span>
                     <h2 className="modal-title">{product.name}</h2>
                     <div className="modal-categories">
-                        {product.categories.join(' > ')}
+                        {[
+                            dataSourceName,
+                            ...product.categories
+                        ].join(' > ')}
                     </div>
                 </div>
 

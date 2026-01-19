@@ -38,17 +38,23 @@ function DataSource({ onProductClick }: { onProductClick: (p: Product) => void }
 
 function AppContent() {
   const { isAnalysis } = useFilters()
-  const { allData, isLoading, currentData } = useData()
+  const { allData, isLoading, currentData, currentSource } = useData()
 
   // Local UI State (Modal)
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<{ product: Product, sourceName: string } | null>(null)
+
+  const handleProductClick = (product: Product) => {
+    if (currentSource) {
+      setSelectedProduct({ product, sourceName: currentSource.name })
+    }
+  }
 
   // Deep Link Handler
   const handleProductLink = (store: string, url: string) => {
     if (allData[store]) {
       const product = allData[store].products.find(p => p.product_url === url)
       if (product) {
-        setSelectedProduct(product)
+        setSelectedProduct({ product, sourceName: store })
       } else {
         console.warn("Product not found in store data", url)
       }
@@ -67,7 +73,7 @@ function AppContent() {
         <AnalysisPage onProductLink={handleProductLink} />
       ) : (
         currentData ? (
-          <DataSource onProductClick={setSelectedProduct} />
+          <DataSource onProductClick={handleProductClick} />
         ) : (
           <div className="container" style={{ marginTop: '2rem' }}>
             <div className="error">Data source not found or loading...</div>
@@ -77,7 +83,8 @@ function AppContent() {
 
       {selectedProduct && (
         <ProductDetail
-          product={selectedProduct}
+          product={selectedProduct.product}
+          dataSourceName={selectedProduct.sourceName}
           onClose={() => setSelectedProduct(null)}
         />
       )}

@@ -19,7 +19,7 @@ export interface Product {
     prices: Price[]
     description?: string | null
     product_url?: string | null
-    ai_cats?: string[]
+    ai_findings?: string[]
 }
 
 export interface Metadata {
